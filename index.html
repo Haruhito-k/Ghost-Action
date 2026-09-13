@@ -57,7 +57,7 @@
             to { transform: rotate(90deg) scale(1.2); }
         }
 
-        /* ゲーム画面全体を包むラッパー（縦幅をスリム化） */
+        /* ゲーム画面全体を包むラッパー */
         #gameWrapper {
             display: flex;
             flex-direction: column;
@@ -127,7 +127,7 @@
             display: block;
         }
         
-        /* 十字キー部分（3x3グリッド）をコンパクトに */
+        /* 十字キー部分（デフォルト・PC用） */
         .d-pad {
             display: grid;
             grid-template-columns: 42px 42px 42px;
@@ -180,7 +180,7 @@
         .arrow-left { border-width: 5px 8px 5px 0; border-color: transparent currentColor transparent transparent; }
         .arrow-right { border-width: 5px 0 5px 8px; border-color: transparent transparent transparent currentColor; }
 
-        /* 右側に配置するアクションボタン群をコンパクトに */
+        /* アクションボタン群（デフォルト・PC用） */
         .action-pad {
             display: grid;
             grid-template-columns: repeat(2, 42px);
@@ -223,6 +223,48 @@
         #btnReset:active, #btnReset.active { background-color: #ff3333; box-shadow: 0 0 0 #880000; }
         #btnSwap     { grid-column: 2; grid-row: 3; border-color: #00ccff; color: #00ccff; box-shadow: 0 2px 0 #005588; font-size: 8px; }
         #btnSwap:active, #btnSwap.active { background-color: #00ccff; color: #0d0e15; box-shadow: 0 0 0 #005588; }
+
+        /* スマホ専用の特大サイズボタンレイアウト（画面幅900px以下） */
+        @media screen and (max-width: 900px) {
+            .console-container {
+                width: 840px;
+                gap: 2px;
+                padding: 0;
+            }
+            .canvas-container {
+                width: 440px; /* ゲーム画面を少しコンパクトにして、ボタンの幅を十分に確保 */
+            }
+            .d-pad {
+                grid-template-columns: 66px 66px 66px;
+                grid-template-rows: 60px 60px 60px;
+                gap: 5px;
+                padding: 8px;
+                background: rgba(26, 28, 38, 0.95);
+            }
+            .d-btn {
+                font-size: 15px;
+                border-radius: 8px;
+            }
+            .arrow-up { border-width: 0 9px 14px 9px; }
+            .arrow-down { border-width: 14px 9px 0 9px; }
+            .arrow-left { border-width: 9px 14px 9px 0; }
+            .arrow-right { border-width: 9px 0 9px 14px; }
+
+            .action-pad {
+                grid-template-columns: repeat(2, 64px);
+                grid-template-rows: repeat(3, 58px);
+                gap: 5px;
+                padding: 8px;
+                background: rgba(26, 28, 38, 0.95);
+            }
+            .btn {
+                font-size: 13px;
+                border-radius: 8px;
+            }
+            #btnSwap {
+                font-size: 13px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -252,11 +294,11 @@
             <!-- 左側のコントローラー -->
             <div class="d-pad" id="dPadArea">
                 <button class="d-btn" id="btnUpLeft">
-                    <div style="display:flex; gap:1px; align-items:center;"><div class="arrow-icon arrow-left" style="transform:scale(0.5);"></div><div class="arrow-icon arrow-up" style="transform:scale(0.5);"></div></div>
+                    <div style="display:flex; gap:1px; align-items:center;"><div class="arrow-icon arrow-left" style="transform:scale(0.7);"></div><div class="arrow-icon arrow-up" style="transform:scale(0.7);"></div></div>
                 </button>
                 <button class="d-btn" id="btnJump"><div class="arrow-icon arrow-up"></div></button>
                 <button class="d-btn" id="btnUpRight">
-                    <div style="display:flex; gap:1px; align-items:center;"><div class="arrow-icon arrow-up" style="transform:scale(0.5);"></div><div class="arrow-icon arrow-right" style="transform:scale(0.5);"></div></div>
+                    <div style="display:flex; gap:1px; align-items:center;"><div class="arrow-icon arrow-up" style="transform:scale(0.7);"></div><div class="arrow-icon arrow-right" style="transform:scale(0.7);"></div></div>
                 </button>
                 <button class="d-btn" id="btnLeft"><div class="arrow-icon arrow-left"></div></button>
                 <button class="d-btn" id="btnRight"><div class="arrow-icon arrow-right"></div></button>
@@ -281,12 +323,12 @@
     </div>
 
 <script>
-// スマホでも見切れないように高さを調整したスケーリング処理
+// 全体のサイズ感は変えず、画面全体を自動スケーリングする処理
 function autoResize() {
     const wrapper = document.getElementById('gameWrapper');
     const warning = document.getElementById('rotateWarning');
     const baseWidth = 840;
-    const baseHeight = 460; // 縦幅をスリム化
+    const baseHeight = 460;
 
     // モバイル端末判定
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.innerWidth <= 1024);
@@ -303,13 +345,7 @@ function autoResize() {
 
     const scaleX = clientWidth / baseWidth;
     const scaleY = clientHeight / baseHeight;
-    let scale = Math.min(scaleX, scaleY);
-
-    // スマホ（横幅が狭い端末）の場合、大きくしすぎではみ出さないよう1.15倍に調整
-    const isMobileSize = clientWidth <= 900;
-    if (isMobileSize) {
-        scale *= 1.15;
-    }
+    const scale = Math.min(scaleX, scaleY);
 
     wrapper.style.transform = `scale(${scale})`;
 }
