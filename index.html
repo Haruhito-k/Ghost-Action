@@ -26,10 +26,6 @@
             margin: 5px 0;
             cursor: pointer;
             user-select: none;
-            transition: color 0.2s;
-        }
-        h1:hover {
-            color: #ff0055;
         }
         canvas {
             background-color: #161823;
@@ -191,11 +187,11 @@ let particles = [];
 
 let ghostSpeedRatio = 0.5;
 
-// デベロッパーモード用変数
-let devModeUnlocked = false;
-let titleClickCount = 0;
-let goalClickCount = 0;
-let devStep = 0; // 0: タイトルクリック待ち, 1: ゴールクリック待ち
+// 秘密裏に判定するための変数 (名前を分かりにくく変更)
+let _x1 = false;
+let _c1 = 0;
+let _c2 = 0;
+let _s1 = 0;
 
 const barrier = {
     x: 100, y: 280, w: 15, h: 120,
@@ -207,63 +203,55 @@ let startTime = Date.now();
 let elapsedTime = 0;
 let currentStageIndex = 0;
 
-// --- タイトルクリック判定 (5回) ---
+// --- 画面に何も表示せず、裏でタイトルクリック（5回）を判定 ---
 gameTitle.addEventListener('click', () => {
-    if (devModeUnlocked) return;
+    if (_x1) return;
     
-    if (devStep === 0) {
-        titleClickCount++;
-        updateStatus(`タイトルクリック中... (${titleClickCount}/5)`);
-        if (titleClickCount >= 5) {
-            devStep = 1;
-            updateStatus('タイトル5回クリア！ 次は画面内の「黄色いゴール（ドア）」を5回クリックしてください');
+    if (_s1 === 0) {
+        _c1++;
+        if (_c1 >= 5) {
+            _s1 = 1; // 次はゴールへ
         }
     } else {
-        resetDevSequence();
+        _z_reset();
     }
 });
 
-// --- キャンバス（ゴール）クリック判定 (5回) ---
+// --- 画面に何も表示せず、裏でゴールクリック（5回）を判定 ---
 canvas.addEventListener('click', (e) => {
-    if (devModeUnlocked) return;
+    if (_x1) return;
 
     const rect = canvas.getBoundingClientRect();
-    // キャンバス上の実座標に変換
     const clickX = (e.clientX - rect.left) * (canvas.width / rect.width);
     const clickY = (e.clientY - rect.top) * (canvas.height / rect.height);
 
     const stg = getCurrentStage();
     const goal = stg.goal;
 
-    // ゴール（ドア）の範囲内をクリックしたか判定
     const isInsideGoal = clickX >= goal.x && clickX <= goal.x + goal.w &&
                          clickY >= goal.y && clickY <= goal.y + goal.h;
 
-    if (devStep === 1) {
+    if (_s1 === 1) {
         if (isInsideGoal) {
-            goalClickCount++;
-            updateStatus(`ゴールクリック中... (${goalClickCount}/5)`);
-            if (goalClickCount >= 5) {
-                devModeUnlocked = true;
+            _c2++;
+            if (_c2 >= 5) {
+                _x1 = true;
                 devPanel.classList.add('active');
                 updateStatus('🔧 デベロッパーモードが有効になりました');
             }
         } else {
-            // ゴール以外の場所をクリックしたらリセット
-            resetDevSequence();
+            _z_reset();
         }
     } else {
-        // ステップ0の時にキャンバスをクリックしたらリセット
-        resetDevSequence();
+        _z_reset();
     }
 });
 
-function resetDevSequence() {
-    if (devModeUnlocked) return;
-    titleClickCount = 0;
-    goalClickCount = 0;
-    devStep = 0;
-    updateStatus('操作: [R] 録画 | [Space] 再生/停止 | [Q/E] 速度変更');
+function _z_reset() {
+    if (_x1) return;
+    _c1 = 0;
+    _c2 = 0;
+    _s1 = 0;
 }
 
 // --- キーボード入力イベント ---
