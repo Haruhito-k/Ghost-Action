@@ -21,44 +21,61 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             min-height: 100vh;
             max-height: 100vh;
             overflow: hidden;
             touch-action: none;
         }
         h1 {
-            font-size: clamp(16px, 4vw, 22px);
+            font-size: clamp(16px, 3.5vw, 20px);
             margin: 2px 0;
             cursor: pointer;
         }
         .status {
-            font-size: clamp(11px, 2.5vw, 13px);
+            font-size: clamp(11px, 2.2vw, 13px);
             font-weight: bold;
             color: #ff0055;
             height: 18px;
             margin: 2px 0;
         }
-        canvas {
-            background-color: #161823;
-            border: 2px solid #ff0055;
-            display: block;
+        /* ゲーム画面（キャンバス）のラッパー */
+        .canvas-container {
+            position: relative;
             width: 100%;
-            max-width: 900px;
-            height: auto;
+            max-width: 850px;
             aspect-ratio: 16 / 9;
             max-height: 52vh;
+            margin: 2px auto;
             box-shadow: 0 0 20px rgba(255, 0, 85, 0.3);
             border-radius: 4px;
+            overflow: hidden;
+            border: 2px solid #ff0055;
+            background-color: #161823;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        /* 画面右下に重ねるアクションボタン群 */
+        .overlay-actions {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(34px, 42px));
+            gap: 4px;
+            z-index: 10;
         }
         .dev-panel {
             display: none;
             background: #262938;
             border: 2px solid #ffcc00;
-            padding: 6px;
-            margin: 4px 0;
+            padding: 4px;
+            margin: 2px 0;
             border-radius: 6px;
-            max-width: 900px;
+            max-width: 850px;
             width: 100%;
         }
         .dev-panel.active {
@@ -66,16 +83,14 @@
         }
         .controls {
             display: flex;
-            justify-content: space-around;
+            justify-content: center;
             align-items: center;
-            max-width: 900px;
+            max-width: 850px;
             width: 100%;
             margin: 2px auto;
-            padding: 0 5px;
-            gap: 10px;
-            flex-grow: 1;
-            max-height: 28vh;
+            padding: 0 10px;
         }
+        /* 十字キー部分：斜めキーを追加したため3x3のグリッドに拡張 */
         .d-pad {
             display: grid;
             grid-template-columns: 50px 50px 50px;
@@ -88,62 +103,59 @@
             background-color: #262938;
             color: #00ffcc;
             border: 2px solid #00ffcc;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 4px 0 #008866;
+            box-shadow: 0 3px 0 #008866;
+            font-size: 12px;
+            font-weight: bold;
             transition: transform 0.05s, box-shadow 0.05s;
         }
         .d-btn:active, .d-btn.active {
             background-color: #00ffcc;
             color: #0d0e15;
-            transform: translateY(4px);
+            transform: translateY(3px);
             box-shadow: 0 0 0 #008866;
         }
+        /* 配置指定 */
+        #btnUpLeft   { grid-column: 1; grid-row: 1; font-size: 10px; }
+        #btnJump     { grid-column: 2; grid-row: 1; }
+        #btnUpRight  { grid-column: 3; grid-row: 1; font-size: 10px; }
+        #btnLeft     { grid-column: 1; grid-row: 2; }
+        #btnRight    { grid-column: 3; grid-row: 2; }
+        #btnDown     { grid-column: 2; grid-row: 3; }
+
         /* スタイリッシュな矢印アイコン */
         .arrow-icon {
             width: 0;
             height: 0;
             border-style: solid;
         }
-        .arrow-up { border-width: 0 9px 13px 9px; border-color: transparent transparent currentColor transparent; }
-        .arrow-down { border-width: 13px 9px 0 9px; border-color: currentColor transparent transparent transparent; }
-        .arrow-left { border-width: 9px 13px 9px 0; border-color: transparent currentColor transparent transparent; }
-        .arrow-right { border-width: 9px 0 9px 13px; border-color: transparent transparent transparent currentColor; }
+        .arrow-up { border-width: 0 8px 11px 8px; border-color: transparent transparent currentColor transparent; }
+        .arrow-down { border-width: 11px 8px 0 8px; border-color: currentColor transparent transparent transparent; }
+        .arrow-left { border-width: 8px 11px 8px 0; border-color: transparent currentColor transparent transparent; }
+        .arrow-right { border-width: 8px 0 8px 11px; border-color: transparent transparent transparent currentColor; }
 
-        #btnJump { grid-column: 2; grid-row: 1; }
-        #btnLeft { grid-column: 1; grid-row: 2; }
-        #btnRight { grid-column: 3; grid-row: 2; }
-        #btnDown { grid-column: 2; grid-row: 3; }
-
-        .action-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            flex-grow: 1;
-            max-width: 500px;
-        }
-        .button-row {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
+        /* 正方形寄りにしたオーバーレイ用ボタン */
         .btn {
-            background-color: #262938;
+            background-color: rgba(38, 41, 56, 0.85);
             color: #fff;
             border: 2px solid #ff0055;
-            padding: 8px 12px;
-            font-size: clamp(11px, 2.5vw, 13px);
+            font-size: clamp(9px, 1.8vw, 11px);
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2px;
             box-shadow: 0 3px 0 #88002d;
             transition: transform 0.05s, box-shadow 0.05s;
-            flex: 1;
-            min-width: 90px;
+            backdrop-filter: blur(2px);
         }
         .btn:active, .btn.active {
             background-color: #ff0055;
@@ -151,41 +163,44 @@
             transform: translateY(3px);
             box-shadow: 0 0 0 #88002d;
         }
+        #btnReset { border-color: #ff3333; box-shadow: 0 3px 0 #880000; }
+        #btnReset:active, #btnReset.active { background-color: #ff3333; box-shadow: 0 0 0 #880000; }
     </style>
 </head>
 <body>
 
     <h1 id="gameTitle">Ghost Action</h1>
     <div class="status" id="statusText">操作: [R] 録画 | [Space] 再生/停止 | [Q/E] 速度変更</div>
-    <canvas id="gameCanvas" width="800" height="450"></canvas>
+    
+    <div class="canvas-container">
+        <canvas id="gameCanvas" width="800" height="450"></canvas>
+        <!-- 画面右下に正方形寄りで配置したアクションボタン -->
+        <div class="overlay-actions">
+            <button class="btn" id="btnRec" style="grid-column: 1; grid-row: 1;">🔴<br>録画</button>
+            <button class="btn" id="btnPlay" style="grid-column: 2; grid-row: 1;">▶<br>再生</button>
+            <button class="btn" id="btnSpeedDown" style="grid-column: 3; grid-row: 1;">Q<br>減速</button>
+            <button class="btn" id="btnSpeedUp" style="grid-column: 1; grid-row: 2;">E<br>加速</button>
+            <button class="btn" id="btnReset" style="grid-column: 2; grid-row: 2;">C<br>リセット</button>
+        </div>
+    </div>
 
     <div class="dev-panel" id="devPanel">
         <div style="color: #ffcc00; font-weight: bold; font-size: 12px; margin-bottom: 3px;">🔧 デベロッパーモード有効</div>
-        <div class="button-row">
-            <button class="btn" onclick="selectStage(0)" style="border-color:#ffcc00; box-shadow:0 3px 0 #886600;">ステージ 1</button>
-            <button class="btn" onclick="selectStage(1)" style="border-color:#ffcc00; box-shadow:0 3px 0 #886600;">ステージ 2</button>
-            <button class="btn" onclick="selectStage(2)" style="border-color:#ffcc00; box-shadow:0 3px 0 #886600;">ステージ 3</button>
+        <div style="display: flex; justify-content: center; gap: 6px;">
+            <button class="btn" onclick="selectStage(0)" style="aspect-ratio: auto; padding: 6px 12px; border-color:#ffcc00; box-shadow:0 3px 0 #886600;">ステージ 1</button>
+            <button class="btn" onclick="selectStage(1)" style="aspect-ratio: auto; padding: 6px 12px; border-color:#ffcc00; box-shadow:0 3px 0 #886600;">ステージ 2</button>
+            <button class="btn" onclick="selectStage(2)" style="aspect-ratio: auto; padding: 6px 12px; border-color:#ffcc00; box-shadow:0 3px 0 #886600;">ステージ 3</button>
         </div>
     </div>
 
     <div class="controls">
         <div class="d-pad">
+            <button class="d-btn" id="btnUpLeft">↖上左</button>
             <button class="d-btn" id="btnJump"><div class="arrow-icon arrow-up"></div></button>
+            <button class="d-btn" id="btnUpRight">↗上右</button>
             <button class="d-btn" id="btnLeft"><div class="arrow-icon arrow-left"></div></button>
             <button class="d-btn" id="btnRight"><div class="arrow-icon arrow-right"></div></button>
             <button class="d-btn" id="btnDown"><div class="arrow-icon arrow-down"></div></button>
-        </div>
-
-        <div class="action-panel">
-            <div class="button-row">
-                <button class="btn" id="btnRec">🔴 録画</button>
-                <button class="btn" id="btnPlay">▶ 再生/停止</button>
-            </div>
-            <div class="button-row">
-                <button class="btn" id="btnSpeedDown">Q: 減速</button>
-                <button class="btn" id="btnSpeedUp">E: 加速</button>
-                <button class="btn" id="btnReset" style="border-color:#ff3333; box-shadow:0 3px 0 #880000;">C: リセット</button>
-            </div>
         </div>
     </div>
 
@@ -289,19 +304,25 @@ function selectStage(index) {
     updateStatus(`ステージ ${index + 1} に移動しました`);
 }
 
-function bindTouchButton(id, codeName, actionFunc) {
+function bindTouchButton(id, codeNames, actionFunc) {
     const el = document.getElementById(id);
     if (!el) return;
 
     const pressOn = (e) => {
         e.preventDefault();
         if (actionFunc) actionFunc();
-        if (codeName) keys[codeName] = true;
+        if (codeNames) {
+            const list = Array.isArray(codeNames) ? codeNames : [codeNames];
+            list.forEach(c => keys[c] = true);
+        }
         el.classList.add('active');
     };
     const pressOff = (e) => {
         e.preventDefault();
-        if (codeName) keys[codeName] = false;
+        if (codeNames) {
+            const list = Array.isArray(codeNames) ? codeNames : [codeNames];
+            list.forEach(c => keys[c] = false);
+        }
         el.classList.remove('active');
     };
 
@@ -315,8 +336,10 @@ function bindTouchButton(id, codeName, actionFunc) {
 
 bindTouchButton('btnLeft', 'ArrowLeft');
 bindTouchButton('btnRight', 'ArrowRight');
-bindTouchButton('btnJump', 'ArrowUp');
+bindTouchButton('btnJump', ['ArrowUp', 'KeyW']);
 bindTouchButton('btnDown', 'ArrowDown');
+bindTouchButton('btnUpLeft', ['ArrowUp', 'ArrowLeft']);
+bindTouchButton('btnUpRight', ['ArrowUp', 'ArrowRight']);
 bindTouchButton('btnRec', null, toggleRecording);
 bindTouchButton('btnPlay', null, togglePlayback);
 bindTouchButton('btnSpeedDown', null, () => changeSpeed(-0.1));
