@@ -281,7 +281,7 @@
     </div>
 
 <script>
-// 画面サイズに合わせた自動スケーリング処理 ＆ 横画面チェック
+// 画面サイズに合わせた自動スケーリング処理 ＆ 横画面チェック（画面めいっぱい拡大）
 function autoResize() {
     const wrapper = document.getElementById('gameWrapper');
     const warning = document.getElementById('rotateWarning');
@@ -298,9 +298,9 @@ function autoResize() {
         warning.style.display = 'none';
     }
 
-    // 画面にしっかり収まるように余白（マージン）を考慮してスケール計算
-    const scaleX = (window.innerWidth - 10) / baseWidth;
-    const scaleY = (window.innerHeight - 10) / baseHeight;
+    // 余白を無くして画面いっぱいに拡大
+    const scaleX = window.innerWidth / baseWidth;
+    const scaleY = window.innerHeight / baseHeight;
     const scale = Math.min(scaleX, scaleY);
 
     wrapper.style.transform = `scale(${scale})`;
