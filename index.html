@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ghost Action - MULTI STAGE</title>
+    <title>Ghost Action - MULTI STAGE (Landscape Recommended)</title>
     <style>
         * {
             box-sizing: border-box;
@@ -25,6 +25,7 @@
             touch-action: none;
         }
 
+        /* 横画面推奨のオーバーレイ表示 */
         #rotateWarning {
             position: fixed;
             top: 0;
@@ -53,82 +54,7 @@
             to { transform: rotate(90deg) scale(1.2); }
         }
 
-        /* スタート画面 */
-        #startScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100dvh;
-            background-color: #0d0e15;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 99997;
-            padding: 20px;
-        }
-        .start-box {
-            background: #161823;
-            border: 3px solid #00ffcc;
-            border-radius: 16px;
-            width: 560px;
-            max-width: 95vw;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 0 30px rgba(0, 255, 204, 0.4);
-        }
-        .start-box h1 {
-            color: #00ffcc;
-            font-size: 28px;
-            margin: 0 0 10px 0;
-            text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
-        }
-        .start-box p {
-            color: #ccc;
-            font-size: 12px;
-            line-height: 1.6;
-            margin: 8px 0;
-        }
-        .start-rules {
-            background: #0d0e15;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 12px;
-            margin: 16px 0;
-            text-align: left;
-        }
-        .start-rules h3 {
-            color: #ff0055;
-            font-size: 12px;
-            margin: 0 0 6px 0;
-        }
-        .start-rules ul {
-            margin: 0;
-            padding-left: 16px;
-            font-size: 11px;
-            color: #aaa;
-            line-height: 1.5;
-        }
-        .start-btn {
-            background-color: #00ffcc;
-            color: #0d0e15;
-            border: none;
-            padding: 14px 40px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #008866;
-            transition: transform 0.05s, box-shadow 0.05s;
-            margin-top: 10px;
-        }
-        .start-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 0 0 #008866;
-            background-color: #00ccaa;
-        }
-
+        /* 画面全体の絶対中央に配置する基準ラッパー */
         #gameWrapper {
             position: absolute;
             top: 50%;
@@ -143,7 +69,7 @@
             flex-shrink: 0;
         }
 
-        h1.title-heading {
+        h1 {
             font-size: 13px;
             margin: 2px 0;
             cursor: pointer;
@@ -156,6 +82,7 @@
             margin: 2px 0;
         }
 
+        /* 上部バー（カラー選択 ＋ 遊び方ボタン） */
         .top-bar-area {
             display: flex;
             gap: 16px;
@@ -164,6 +91,7 @@
             margin: 2px 0;
         }
 
+        /* カラー選択バー */
         .color-picker-bar {
             display: flex;
             gap: 6px;
@@ -189,6 +117,7 @@
             box-shadow: 0 0 6px #fff;
         }
 
+        /* 遊び方ボタン */
         .help-btn {
             background-color: #262938;
             color: #00ffcc;
@@ -199,8 +128,16 @@
             border-radius: 6px;
             cursor: pointer;
             box-shadow: 0 2px 0 #008866;
+            transition: transform 0.05s, box-shadow 0.05s;
+        }
+        .help-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 0 0 #008866;
+            background-color: #00ffcc;
+            color: #0d0e15;
         }
 
+        /* 遊び方説明モーダルポップアップ */
         #helpModal {
             position: fixed;
             top: 0;
@@ -223,6 +160,7 @@
             overflow-y: auto;
             padding: 20px;
             text-align: left;
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.3);
         }
         .help-content h2 {
             color: #00ffcc;
@@ -243,6 +181,10 @@
             line-height: 1.5;
             margin: 4px 0;
         }
+        .help-content ul {
+            padding-left: 16px;
+            margin: 4px 0;
+        }
         .close-modal-btn {
             display: block;
             width: 100%;
@@ -257,7 +199,11 @@
             cursor: pointer;
             text-align: center;
         }
+        .close-modal-btn:active {
+            background-color: #00ccaa;
+        }
 
+        /* スイッチ風コンソールエリア */
         .console-container {
             display: flex;
             justify-content: space-between;
@@ -271,6 +217,7 @@
             flex-direction: row-reverse;
         }
 
+        /* ゲーム画面（キャンバス）のラッパー */
         .canvas-container {
             position: relative;
             width: 780px; 
@@ -301,6 +248,7 @@
             display: block;
         }
         
+        /* 十字キー部分 */
         .d-pad {
             display: grid;
             grid-template-columns: 42px 42px 42px;
@@ -326,6 +274,7 @@
             box-shadow: 0 2px 0 #008866;
             font-size: 10px;
             font-weight: bold;
+            transition: transform 0.05s, box-shadow 0.05s;
         }
         .d-btn:active, .d-btn.active {
             background-color: #00ffcc;
@@ -341,6 +290,17 @@
         #btnRight    { grid-column: 3; grid-row: 2; }
         #btnDown     { grid-column: 2; grid-row: 3; }
 
+        .arrow-icon {
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+        .arrow-up { border-width: 0 5px 8px 5px; border-color: transparent transparent currentColor transparent; }
+        .arrow-down { border-width: 8px 5px 0 5px; border-color: currentColor transparent transparent transparent; }
+        .arrow-left { border-width: 5px 8px 5px 0; border-color: transparent currentColor transparent transparent; }
+        .arrow-right { border-width: 5px 0 5px 8px; border-color: transparent transparent transparent currentColor; }
+
+        /* アクションボタン群 */
         .action-pad {
             display: grid;
             grid-template-columns: repeat(2, 42px);
@@ -365,7 +325,9 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            padding: 0px;
             box-shadow: 0 2px 0 #88002d;
+            transition: transform 0.05s, box-shadow 0.05s;
         }
         .btn:active, .btn.active {
             background-color: #ff0055;
@@ -378,89 +340,148 @@
         #btnSpeedDown{ grid-column: 1; grid-row: 2; }
         #btnSpeedUp  { grid-column: 2; grid-row: 2; }
         #btnReset    { grid-column: 1; grid-row: 3; border-color: #ff3333; box-shadow: 0 2px 0 #880000; }
-        #btnSwap     { grid-column: 2; grid-row: 3; border-color: #00ccff; color: #00ccff; box-shadow: 0 2px 0 #005588; }
+        #btnReset:active, #btnReset.active { background-color: #ff3333; box-shadow: 0 0 0 #880000; }
+        #btnSwap     { grid-column: 2; grid-row: 3; border-color: #00ccff; color: #00ccff; box-shadow: 0 2px 0 #005588; font-size: 8px; }
+        #btnSwap:active, #btnSwap.active { background-color: #00ccff; color: #0d0e15; box-shadow: 0 0 0 #005588; }
+
+        /* スマホ専用レイアウト対応 */
+        @media screen and (max-width: 900px) {
+            #gameWrapper {
+                width: 1120px;
+            }
+            .console-container {
+                width: 1100px;
+                gap: 8px;
+            }
+            .canvas-container {
+                width: 780px; 
+            }
+            .d-pad {
+                grid-template-columns: 66px 66px 66px;
+                grid-template-rows: 60px 60px 60px;
+                gap: 5px;
+                padding: 8px;
+                background: rgba(26, 28, 38, 0.95);
+            }
+            .d-btn {
+                font-size: 15px;
+                border-radius: 8px;
+            }
+            .arrow-up { border-width: 0 9px 14px 9px; }
+            .arrow-down { border-width: 14px 9px 0 9px; }
+            .arrow-left { border-width: 9px 14px 9px 0; }
+            .arrow-right { border-width: 9px 0 9px 14px; }
+
+            .action-pad {
+                grid-template-columns: repeat(2, 64px);
+                grid-template-rows: repeat(3, 58px);
+                gap: 5px;
+                padding: 8px;
+                background: rgba(26, 28, 38, 0.95);
+            }
+            .btn {
+                font-size: 13px;
+                border-radius: 8px;
+            }
+            #btnSwap {
+                font-size: 13px;
+            }
+        }
     </style>
 </head>
 <body>
 
+    <!-- 縦画面時の横画面推奨警告 -->
     <div id="rotateWarning">
         <span>📱🔄</span>
         <div>横画面推奨</div>
         <div style="font-size: 14px; color: #00ffcc; font-weight: normal;">端末を横向きにしてプレイしてください</div>
     </div>
 
-    <!-- スタート画面 -->
-    <div id="startScreen">
-        <div class="start-box">
-            <h1>👻 Ghost Action</h1>
-            <p>自分の動きを録画して「ゴースト」を作り、足場にしてゴールを目指すアクションパズル！</p>
-            
-            <div class="start-rules">
-                <h3>🎮 かんたんルール</h3>
-                <ul>
-                    <li><b>① [ 🔴 録画 ]</b> を押して動く</li>
-                    <li><b>② もう一度 [ 🔴 録画 ]</b> を押してストップ（ゴースト誕生）</li>
-                    <li><b>③ [ ▶ 再生 ]</b> でゴーストを動かし、<b>もう一度 [ ▶ 再生 ]</b> で足場に変形！</li>
-                </ul>
-            </div>
-
-            <button class="start-btn" onclick="startGame()">ゲームスタート！</button>
-        </div>
-    </div>
-
+    <!-- 遊び方説明ポップアップモーダル -->
     <div id="helpModal">
         <div class="help-content">
             <h2>📖 遊び方・ルール</h2>
+            
             <h3>1. ゲームの目的</h3>
-            <p>自分の動きを「録画」してゴーストを作り、そのゴーストを「足場」にして一番奥のゴール（オレンジ色の扉）を目指すアクションパズルです。</p>
+            <p>自分の動きを「録画」してゴーストを作り、そのゴーストを「足場」にして高いところや障害物を乗り越え、一番奥のゴール（オレンジ色の扉）を目指すアクションパズルゲームです！</p>
+
             <h3>2. 基本操作</h3>
-            <p><b>[ 🔴 録画 ]</b>：プレイヤーの動きの録画を開始/停止します。</p>
-            <p><b>[ ▶ 再生 ]</b>：録画したゴーストを動かします。再生中にもう一度押すと、その場で固定された「足場」になります。</p>
-            <p><b>[ ⇄ 入替 ]</b>：左右のコントローラーと画面の位置を入れ替えます。</p>
-            <button class="close-modal-btn" onclick="toggleHelpModal(false)">閉じる</button>
+            <ul>
+                <li><b>移動：</b> 左右の矢印ボタン（または <b>A / Dキー</b>）</li>
+                <li><b>ジャンプ：</b> 上矢印ボタン または <b>W / Kキー</b>（またはW/Sの組み合わせでななめジャンプも可能）</li>
+            </ul>
+
+            <h3>3. 💡 録画とゴーストの使い方のコツ</h3>
+            <p>そのままでは届かない高い崖やトゲの上に行くために、以下の手順を使います：</p>
+            <ul>
+                <li><b>① [ 🔴 録画 ] ボタンを押す：</b> 自分の動きの録画が始まります。ジャンプして足場に飛び乗るなどの動きをさせます。</li>
+                <li><b>② もう一度 [ 🔴 録画 ] ボタンを押す（完了）：</b> 録画がストップし、自分の動きをコピーした「ゴースト」が誕生します。</li>
+                <li><b>③ [ ▶ 再生 ] ボタンを押す：</b> ゴーストが動き出します。動いている最中に<b>もう一度 [ ▶ 再生 ] ボタンを押す</b>と、その瞬間でゴーストが<b>「固定された足場」</b>に変形します！</li>
+                <li><b>④ 足場を使った攻略：</b> 固定されたゴーストの上に飛び乗ることで、通常では届かない高いエリアへ進めるようになります。</li>
+            </ul>
+
+            <h3>4. その他のボタン機能</h3>
+            <ul>
+                <li><b>Q / E（減速・加速）：</b> 再生されるゴーストのスピードを調整できます。</li>
+                <li><b>C（リセット）：</b> ゴーストやステージ状況を最初の状態に戻します。</li>
+                <li><b>⇄（入替）：</b> 左右のコントローラーの配置を入れ替えます（利き手に合わせられます）。</li>
+            </ul>
+
+            <button class="close-modal-btn" onclick="toggleHelpModal(false)">ゲームに戻る</button>
         </div>
     </div>
 
     <div id="gameWrapper">
-        <h1 class="title-heading" id="gameTitle">Ghost Action</h1>
+        <h1 id="gameTitle">Ghost Action</h1>
         <div class="status" id="statusText">操作: [R] 録画 | [Space] 再生/停止 | [Q/E] 速度変更</div>
         
+        <!-- 上部バー（カラー選択 ＋ 遊び方ボタン） -->
         <div class="top-bar-area">
-            <!-- 赤色を削除したカラー選択バー -->
             <div class="color-picker-bar">
                 <span>キャラカラー:</span>
                 <div class="color-chip active" style="background-color: #00ffcc;" onclick="changePlayerColor('#00ffcc', this)"></div>
+                <div class="color-chip" style="background-color: #ff3333;" onclick="changePlayerColor('#ff3333', this)"></div>
+                <div class="color-chip" style="background-color: #ff0055;" onclick="changePlayerColor('#ff0055', this)"></div>
                 <div class="color-chip" style="background-color: #ffcc00;" onclick="changePlayerColor('#ffcc00', this)"></div>
                 <div class="color-chip" style="background-color: #00ccff;" onclick="changePlayerColor('#00ccff', this)"></div>
                 <div class="color-chip" style="background-color: #ff66ff;" onclick="changePlayerColor('#ff66ff', this)"></div>
                 <div class="color-chip" style="background-color: #ffffff;" onclick="changePlayerColor('#ffffff', this)"></div>
             </div>
-            <button class="help-btn" onclick="toggleHelpModal(true)">❓ 遊び方</button>
+            <button class="help-btn" onclick="toggleHelpModal(true)">❓ 遊び方・ルール</button>
         </div>
 
         <div class="dev-panel" id="devPanel">
-            <div style="color: #ffcc00; font-weight: bold; font-size: 10px;">🔧 デベロッパーモード</div>
+            <div style="color: #ffcc00; font-weight: bold; font-size: 10px; margin-bottom: 2px;">🔧 デベロッパーモード有効</div>
             <div style="display: flex; justify-content: center; gap: 6px;">
-                <button class="btn" onclick="selectStage(0)" style="grid-column:auto; grid-row:auto;">ステージ 1</button>
-                <button class="btn" onclick="selectStage(1)" style="grid-column:auto; grid-row:auto;">ステージ 2</button>
-                <button class="btn" onclick="selectStage(2)" style="grid-column:auto; grid-row:auto;">ステージ 3</button>
+                <button class="btn" onclick="selectStage(0)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 3px 8px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">ステージ 1</button>
+                <button class="btn" onclick="selectStage(1)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 3px 8px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">ステージ 2</button>
+                <button class="btn" onclick="selectStage(2)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 3px 8px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">ステージ 3</button>
             </div>
         </div>
 
+        <!-- スイッチ風のコンソールエリア -->
         <div class="console-container" id="consoleContainer">
+            <!-- 左側のコントローラー -->
             <div class="d-pad" id="dPadArea">
-                <button class="d-btn" id="btnUpLeft">↖</button>
-                <button class="d-btn" id="btnJump">⬆</button>
-                <button class="d-btn" id="btnUpRight">↗</button>
-                <button class="d-btn" id="btnLeft">⬅</button>
-                <button class="d-btn" id="btnRight">➡</button>
-                <button class="d-btn" id="btnDown">⬇</button>
+                <button class="d-btn" id="btnUpLeft">
+                    <div style="display:flex; gap:1px; align-items:center;"><div class="arrow-icon arrow-left" style="transform:scale(0.7);"></div><div class="arrow-icon arrow-up" style="transform:scale(0.7);"></div></div>
+                </button>
+                <button class="d-btn" id="btnJump"><div class="arrow-icon arrow-up"></div></button>
+                <button class="d-btn" id="btnUpRight">
+                    <div style="display:flex; gap:1px; align-items:center;"><div class="arrow-icon arrow-up" style="transform:scale(0.7);"></div><div class="arrow-icon arrow-right" style="transform:scale(0.7);"></div></div>
+                </button>
+                <button class="d-btn" id="btnLeft"><div class="arrow-icon arrow-left"></div></button>
+                <button class="d-btn" id="btnRight"><div class="arrow-icon arrow-right"></div></button>
+                <button class="d-btn" id="btnDown"><div class="arrow-icon arrow-down"></div></button>
             </div>
 
+            <!-- 中央のゲーム画面 -->
             <div class="canvas-container">
                 <canvas id="gameCanvas" width="800" height="450"></canvas>
             </div>
 
+            <!-- 右側のコントローラー -->
             <div class="action-pad" id="actionPadArea">
                 <button class="btn" id="btnRec">🔴<br>録画</button>
                 <button class="btn" id="btnPlay">▶<br>再生</button>
@@ -473,129 +494,267 @@
     </div>
 
 <script>
+// --- Web Audio API による効果音システム ---
 let audioCtx = null;
+
 function initAudio() {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
 }
+
 function playSound(type) {
     try {
         initAudio();
         if (!audioCtx) return;
-        let now = audioCtx.currentTime;
-        let osc = audioCtx.createOscillator();
-        let gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+
         if (type === 'jump') {
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.type = 'square';
             osc.frequency.setValueAtTime(150, now);
             osc.frequency.exponentialRampToValueAtTime(400, now + 0.1);
-            gain.gain.setValueAtTime(0.15, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
-            osc.start(now); osc.stop(now + 0.1);
-        } else if (type === 'clear') {
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.1);
+        } else if (type === 'switch') {
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.type = 'sine';
             osc.frequency.setValueAtTime(300, now);
-            gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
-            osc.start(now); osc.stop(now + 0.3);
-        } else if (type === 'hit') {
+            osc.frequency.setValueAtTime(600, now + 0.08);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.2);
+        } else if (type === 'die') {
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
             osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(120, now);
-            osc.frequency.exponentialRampToValueAtTime(40, now + 0.2);
-            gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
-            osc.start(now); osc.stop(now + 0.2);
+            osc.frequency.setValueAtTime(220, now);
+            osc.frequency.linearRampToValueAtTime(80, now + 0.2);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.2);
+        } else if (type === 'clear') {
+            let notes = [261.63, 329.63, 392.00, 523.25];
+            notes.forEach((freq, i) => {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, now + i * 0.1);
+                gain.gain.setValueAtTime(0.2, now + i * 0.1);
+                gain.gain.linearRampToValueAtTime(0.01, now + i * 0.1 + 0.15);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now + i * 0.1);
+                osc.stop(now + i * 0.1 + 0.15);
+            });
         }
     } catch(e) {}
 }
 
-let gameStarted = false;
-function startGame() {
-    initAudio();
-    gameStarted = true;
-    document.getElementById('startScreen').style.display = 'none';
-    startTime = Date.now();
-    resetAllGhosts();
+function autoResize() {
+    const wrapper = document.getElementById('gameWrapper');
+    const warning = document.getElementById('rotateWarning');
+    const baseWidth = 1120;
+    const baseHeight = 520;
+
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.innerWidth <= 1024);
+    const isPortrait = window.innerHeight > window.innerWidth;
+
+    if (isTouchDevice && isPortrait) {
+        warning.style.display = 'flex';
+    } else {
+        warning.style.display = 'none';
+    }
+
+    const clientWidth = document.documentElement.clientWidth;
+    const clientHeight = document.documentElement.clientHeight;
+
+    const scaleX = clientWidth / baseWidth;
+    const scaleY = clientHeight / baseHeight;
+    const scale = Math.min(scaleX, scaleY);
+
+    wrapper.style.transform = `translate(-50%, -50%) scale(${scale})`;
 }
+
+window.addEventListener('resize', autoResize);
+window.addEventListener('orientationchange', autoResize);
+window.addEventListener('DOMContentLoaded', autoResize);
+autoResize();
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const statusText = document.getElementById('statusText');
+const devPanel = document.getElementById('devPanel');
+const gameTitle = document.getElementById('gameTitle');
+const consoleContainer = document.getElementById('consoleContainer');
 const helpModal = document.getElementById('helpModal');
 
 const gravity = 0.45;
 const keys = {};
+
 let isRecording = false;
 let recordedFrames = [];
 let ghosts = [];
 let bullets = [];
 let bulletTimer = 0;
 let particles = [];
+
 let ghostSpeedRatio = 0.5;
+
+let _x1 = false;
+let _c1 = 0;
+let _c2 = 0;
+let _s1 = 0;
+
+const barrier = {
+    x: 100, y: 280, w: 15, h: 120,
+    color: 'rgba(0, 229, 255, 0.6)',
+    borderColor: '#00e5ff'
+};
+
 let startTime = Date.now();
 let elapsedTime = 0;
 let currentStageIndex = 0;
 
-const player = { x: 40, y: 350, w: 22, h: 26, vx: 0, vy: 0, prevY: 350, isGrounded: false, color: '#00ffcc' };
+const player = {
+    x: 40, y: 350, w: 22, h: 26, vx: 0, vy: 0, prevY: 350, isGrounded: false, color: '#00ffcc'
+};
 
-function toggleHelpModal(show) { initAudio(); helpModal.style.display = show ? 'flex' : 'none'; }
+function toggleHelpModal(show) {
+    initAudio();
+    helpModal.style.display = show ? 'flex' : 'none';
+}
+
 function changePlayerColor(colorHex, element) {
     initAudio();
     player.color = colorHex;
     document.querySelectorAll('.color-chip').forEach(chip => chip.classList.remove('active'));
     element.classList.add('active');
-    statusText.innerText = 'プレイヤーカラーを変更しました';
+    updateStatus(`プレイヤーカラーを変更しました`);
+}
+
+function toggleLayoutSwap() {
+    initAudio();
+    consoleContainer.classList.toggle('reverse');
+    const isReversed = consoleContainer.classList.contains('reverse');
+    updateStatus(isReversed ? '操作配置: 右手十字キー / 左手アクション' : '操作配置: 左手十字キー / 右手アクション');
+}
+
+gameTitle.addEventListener('click', () => {
+    if (_x1) return;
+    if (_s1 === 0) {
+        _c1++;
+        if (_c1 >= 5) _s1 = 1;
+    } else {
+        _z_reset();
+    }
+});
+
+canvas.addEventListener('click', (e) => {
+    initAudio();
+    if (_x1) return;
+    const rect = canvas.getBoundingClientRect();
+    const clickX = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const clickY = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+    const stg = getCurrentStage();
+    const goal = stg.goal;
+    const isInsideGoal = clickX >= goal.x && clickX <= goal.x + goal.w &&
+                         clickY >= goal.y && clickY <= goal.y + goal.h;
+
+    if (_s1 === 1) {
+        if (isInsideGoal) {
+            _c2++;
+            if (_c2 >= 5) {
+                _x1 = true;
+                devPanel.classList.add('active');
+                updateStatus('🔧 デベロッパーモード有効');
+            }
+        } else {
+            _z_reset();
+        }
+    } else {
+        _z_reset();
+    }
+});
+
+function _z_reset() {
+    if (_x1) return;
+    _c1 = 0;
+    _c2 = 0;
+    _s1 = 0;
 }
 
 window.addEventListener('keydown', e => {
-    if (!gameStarted || helpModal.style.display === 'flex') return;
+    // モーダル表示中はキー操作を無効化
+    if (helpModal.style.display === 'flex') return;
     initAudio();
     if (e.code === 'KeyR' && !e.repeat) toggleRecording();
     if (e.code === 'Space' && !e.repeat) { togglePlayback(); e.preventDefault(); }
     if (e.code === 'KeyC' && !e.repeat) resetAllGhosts();
-    if (e.code === 'KeyQ') ghostSpeedRatio = Math.max(0.1, ghostSpeedRatio - 0.1);
-    if (e.code === 'KeyE') ghostSpeedRatio = Math.min(2.0, ghostSpeedRatio + 0.1);
+    if (e.code === 'KeyQ' || e.code === 'BracketLeft') changeSpeed(-0.1);
+    if (e.code === 'KeyE' || e.code === 'BracketRight') changeSpeed(0.1);
     keys[e.code] = true;
 });
 window.addEventListener('keyup', e => keys[e.code] = false);
 
-let titleClickCount = 0;
-document.getElementById('gameTitle').addEventListener('click', () => {
-    titleClickCount++;
-    if (titleClickCount >= 5) {
-        document.getElementById('devPanel').classList.toggle('active');
-        statusText.innerText = '🔧 デベロッパーモード切替';
-        titleClickCount = 0;
-    }
-});
+function changeSpeed(delta) {
+    ghostSpeedRatio = Math.max(0.1, Math.min(2.0, Number((ghostSpeedRatio + delta).toFixed(1))));
+    updateStatus(`ゴースト速度: ${ghostSpeedRatio.toFixed(1)}倍`);
+}
 
 function selectStage(index) {
     currentStageIndex = index;
     resetAllGhosts();
     startTime = Date.now();
-    statusText.innerText = `ステージ ${index + 1} に移動しました`;
+    updateStatus(`ステージ ${index + 1} に移動しました`);
 }
 
 function bindTouchButton(id, codeNames, actionFunc) {
     const el = document.getElementById(id);
     if (!el) return;
+
     const pressOn = (e) => {
         e.preventDefault();
-        if (!gameStarted || helpModal.style.display === 'flex') return;
+        if (helpModal.style.display === 'flex') return;
         initAudio();
         if (actionFunc) actionFunc();
         if (codeNames) {
-            (Array.isArray(codeNames) ? codeNames : [codeNames]).forEach(c => keys[c] = true);
+            const list = Array.isArray(codeNames) ? codeNames : [codeNames];
+            list.forEach(c => keys[c] = true);
         }
         el.classList.add('active');
     };
     const pressOff = (e) => {
         e.preventDefault();
         if (codeNames) {
-            (Array.isArray(codeNames) ? codeNames : [codeNames]).forEach(c => keys[c] = false);
+            const list = Array.isArray(codeNames) ? codeNames : [codeNames];
+            list.forEach(c => keys[c] = false);
         }
         el.classList.remove('active');
     };
+
     el.addEventListener('mousedown', pressOn);
     el.addEventListener('mouseup', pressOff);
+    el.addEventListener('mouseleave', pressOff);
     el.addEventListener('touchstart', pressOn, { passive: false });
     el.addEventListener('touchend', pressOff, { passive: false });
+    el.addEventListener('touchcancel', pressOff, { passive: false });
 }
 
 bindTouchButton('btnLeft', 'ArrowLeft');
@@ -606,10 +765,10 @@ bindTouchButton('btnUpLeft', ['ArrowUp', 'ArrowLeft']);
 bindTouchButton('btnUpRight', ['ArrowUp', 'ArrowRight']);
 bindTouchButton('btnRec', null, toggleRecording);
 bindTouchButton('btnPlay', null, togglePlayback);
-bindTouchButton('btnSpeedDown', null, () => { ghostSpeedRatio = Math.max(0.1, ghostSpeedRatio - 0.1); });
-bindTouchButton('btnSpeedUp', null, () => { ghostSpeedRatio = Math.min(2.0, ghostSpeedRatio + 0.1); });
+bindTouchButton('btnSpeedDown', null, () => changeSpeed(-0.1));
+bindTouchButton('btnSpeedUp', null, () => changeSpeed(0.1));
 bindTouchButton('btnReset', null, resetAllGhosts);
-bindTouchButton('btnSwap', null, () => document.getElementById('consoleContainer').classList.toggle('reverse'));
+bindTouchButton('btnSwap', null, toggleLayoutSwap);
 
 const stages = [
     {
@@ -624,7 +783,10 @@ const stages = [
             { x: 785, y: 0, w: 15, h: 450 }
         ],
         spikes: [{ x: 200, y: 430, w: 300, h: 20 }],
-        movingSpikes: [], windZones: [], switches: [], doors: [],
+        movingSpikes: [],
+        windZones: [],
+        switches: [],
+        doors: [],
         shooterEnemies: [{ x: 720, y: 210, w: 30, h: 40, dir: 'left' }],
         movingEnemies: [{ x: 520, y: 224, w: 26, h: 26, vx: -0.8, minX: 510, maxX: 640 }]
     },
@@ -642,7 +804,8 @@ const stages = [
         spikes: [{ x: 150, y: 430, w: 450, h: 20 }],
         movingSpikes: [{ x: 350, y: 200, w: 40, h: 20, vy: 1.5, minY: 150, maxY: 380 }],
         windZones: [{ x: 180, y: 100, w: 120, h: 300, forceX: 0, forceY: -0.468 }],
-        switches: [], doors: [],
+        switches: [],
+        doors: [],
         shooterEnemies: [{ x: 730, y: 180, w: 30, h: 40, dir: 'left' }],
         movingEnemies: []
     },
@@ -658,28 +821,45 @@ const stages = [
             { x: 785, y: 0, w: 15, h: 450 }
         ],
         spikes: [{ x: 180, y: 430, w: 470, h: 20 }],
-        movingSpikes: [], windZones: [],
+        movingSpikes: [],
+        windZones: [],
         switches: [{ x: 420, y: 70, w: 30, h: 10, pressed: false, targetDoorId: 0 }],
         doors: [
             { id: 0, x: 700, y: 270, w: 20, h: 130, open: false },
-            { id: 0, x: 760, y: 270, w: 20, h: 130, open: false }
+            { id: 0, x: 760, y: 270, w: 20, h: 130, open: false },
+            { id: 0, x: 700, y: 255, w: 80, h: 15, open: false }
         ],
-        shooterEnemies: [{ x: 420, y: 110, w: 30, h: 40, dir: 'left' }],
+        shooterEnemies: [
+            { x: 420, y: 110, w: 30, h: 40, dir: 'left' },
+            { x: 570, y: 380, w: 40, h: 20, dir: 'up' }
+        ],
         movingEnemies: []
     }
 ];
 
-function getCurrentStage() { return stages[currentStageIndex]; }
+function getCurrentStage() {
+    return stages[currentStageIndex];
+}
 
 function toggleRecording() {
     if (!isRecording) {
-        isRecording = true; recordedFrames = [];
-        statusText.innerText = '🔴 録画中...';
+        isRecording = true;
+        recordedFrames = [];
+        updateStatus('🔴 録画中...');
     } else {
         isRecording = false;
         if (recordedFrames.length > 0) {
-            ghosts.push({ x: recordedFrames[0].x, y: recordedFrames[0].y, w: 22, h: 26, frames: [...recordedFrames], progress: 0, state: 'IDLE' });
-            statusText.innerText = '🟢 録画完了 -> 再生ボタンを押してください';
+            ghosts.push({
+                x: recordedFrames[0].x,
+                y: recordedFrames[0].y,
+                w: 22, h: 26,
+                frames: [...recordedFrames],
+                progress: 0,
+                state: 'IDLE'
+            });
+            updateStatus('🟢 録画完了 -> 再生ボタンを押してください');
+        } else {
+            updateStatus('録画データが空です');
         }
     }
 }
@@ -687,30 +867,76 @@ function toggleRecording() {
 function togglePlayback() {
     const targetGhost = ghosts.slice().reverse().find(g => g.state === 'IDLE' || g.state === 'REPLAYING');
     if (!targetGhost) return;
+
     if (targetGhost.state === 'IDLE') {
         targetGhost.state = 'REPLAYING';
-        statusText.innerText = '▶️ 再生中...（もう一度押すと足場化）';
+        updateStatus('▶️ ゴースト再生中...（もう一度押すと足場化）');
     } else if (targetGhost.state === 'REPLAYING') {
+        const index = Math.floor(targetGhost.progress);
+        if (targetGhost.frames[index]) {
+            targetGhost.x = targetGhost.frames[index].x;
+            targetGhost.y = targetGhost.frames[index].y;
+        }
         targetGhost.state = 'STOPPED';
-        statusText.innerText = '⏹️ 足場化完了';
+        updateStatus('⏹️ 足場化完了');
     }
 }
 
 function resetAllGhosts() {
-    isRecording = false; recordedFrames = []; ghosts = []; bullets = []; particles = [];
+    isRecording = false;
+    recordedFrames = [];
+    ghosts = [];
+    bullets = [];
+    particles = [];
     const stg = getCurrentStage();
     if (stg.switches) stg.switches.forEach(s => s.pressed = false);
     if (stg.doors) stg.doors.forEach(d => d.open = false);
-    player.x = stg.start.x; player.y = stg.start.y; player.vx = 0; player.vy = 0;
-    statusText.innerText = 'リセットしました';
+    respawnPlayer();
+    updateStatus('リセットしました');
+}
+
+function respawnPlayer() {
+    playSound('die');
+    const stg = getCurrentStage();
+    player.x = stg.start.x;
+    player.y = stg.start.y;
+    player.vx = 0;
+    player.vy = 0;
+}
+
+function updateStatus(msg) {
+    statusText.innerText = msg;
 }
 
 function isColliding(a, b) {
-    return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+    return a.x < b.x + b.w && a.x + a.w > b.x &&
+           a.y < b.y + b.h && a.y + a.h > b.y;
+}
+
+function formatTime(ms) {
+    const totalSec = Math.floor(ms / 1000);
+    const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
+    const s = String(totalSec % 60).padStart(2, '0');
+    const cs = String(Math.floor((ms % 1000) / 10)).padStart(2, '0');
+    return `${m}:${s}.${cs}`;
+}
+
+function createBulletDestroyEffect(x, y) {
+    for (let i = 0; i < 8; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1 + Math.random() * 3;
+        particles.push({
+            x: x, y: y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: 20
+        });
+    }
 }
 
 function update() {
-    if (!gameStarted || helpModal.style.display === 'flex') return;
+    if (helpModal.style.display === 'flex') return;
+
     elapsedTime = Date.now() - startTime;
     const stg = getCurrentStage();
     player.prevY = player.y;
@@ -720,9 +946,19 @@ function update() {
     else player.vx = 0;
 
     if ((keys['ArrowUp'] || keys['KeyW'] || keys['KeyK']) && player.isGrounded) {
-        player.vy = -9.5; player.isGrounded = false; playSound('jump');
+        player.vy = -9.5;
+        player.isGrounded = false;
+        playSound('jump');
     }
+
     player.vy += gravity;
+
+    for (let w of stg.windZones) {
+        if (isColliding(player, w)) {
+            player.vx += w.forceX;
+            player.vy += w.forceY;
+        }
+    }
 
     player.x += player.vx;
     for (let b of stg.map) {
@@ -731,116 +967,231 @@ function update() {
             else if (player.vx < 0) player.x = b.x + b.w;
         }
     }
-    if (stg.doors) {
-        for (let d of stg.doors) {
-            if (!d.open && isColliding(player, d)) {
-                if (player.vx > 0) player.x = d.x - player.w;
-                else if (player.vx < 0) player.x = d.x + d.w;
+    for (let d of stg.doors) {
+        if (!d.open && isColliding(player, d)) {
+            if (player.vx > 0) player.x = d.x - player.w;
+            else if (player.vx < 0) player.x = d.x + d.w;
+        }
+    }
+
+    const isPressingDown = keys['KeyS'] || keys['ArrowDown'];
+    if (player.vy >= 0 && !isPressingDown) {
+        for (let g of ghosts) {
+            if (g.state === 'STOPPED' && isColliding(player, g)) {
+                const wasAbove = player.prevY + player.h <= g.y + 6;
+                if (!wasAbove) {
+                    const bounceSpeed = 5.0;
+                    let angleDeg = (player.vx > 0) ? (210 + Math.random() * 120) : (30 + Math.random() * 120);
+                    const rad = angleDeg * Math.PI / 180;
+                    player.vx = Math.sin(rad) * bounceSpeed;
+                    player.vy = -Math.cos(rad) * bounceSpeed;
+                }
             }
         }
     }
 
     player.y += player.vy;
     player.isGrounded = false;
+
     for (let b of stg.map) {
         if (isColliding(player, b)) {
-            if (player.vy > 0) { player.y = b.y - player.h; player.vy = 0; player.isGrounded = true; }
-            else if (player.vy < 0) { player.y = b.y + b.h; player.vy = 0; }
+            if (player.vy > 0) {
+                player.y = b.y - player.h; player.vy = 0; player.isGrounded = true;
+            } else if (player.vy < 0) {
+                player.y = b.y + b.h; player.vy = 0;
+            }
         }
     }
-    if (stg.doors) {
-        for (let d of stg.doors) {
-            if (!d.open && isColliding(player, d)) {
-                if (player.vy > 0) { player.y = d.y - player.h; player.vy = 0; player.isGrounded = true; }
-                else if (player.vy < 0) { player.y = d.y + d.h; player.vy = 0; }
+    for (let d of stg.doors) {
+        if (!d.open && isColliding(player, d)) {
+            if (player.vy > 0) {
+                player.y = d.y - player.h; player.vy = 0; player.isGrounded = true;
+            } else if (player.vy < 0) {
+                player.y = d.y + d.h; player.vy = 0;
             }
         }
     }
 
-    for (let g of ghosts) {
-        if (g.state === 'STOPPED') {
-            if (player.x < g.x + g.w && player.x + player.w > g.x &&
-                player.prevY + player.h <= g.y + 8 && player.y + player.h >= g.y) {
-                player.y = g.y - player.h; player.vy = 0; player.isGrounded = true;
+    for (let sw of stg.switches) {
+        let isActivated = isColliding(player, sw);
+        if (!isActivated) {
+            for (let g of ghosts) {
+                if (g.state === 'STOPPED' && isColliding(g, sw)) {
+                    isActivated = true;
+                    break;
+                }
             }
         }
-    }
-
-    if (stg.windZones) {
-        for (let w of stg.windZones) {
-            if (isColliding(player, w)) {
-                player.vx += w.forceX || 0;
-                player.vy += w.forceY || 0;
-            }
+        if (isActivated) {
+            if (!sw.pressed) playSound('switch');
+            sw.pressed = true;
+            stg.doors.forEach(d => {
+                if (d.id === sw.targetDoorId) d.open = true;
+            });
         }
     }
 
-    if (stg.movingSpikes) {
-        for (let ms of stg.movingSpikes) {
-            ms.y += ms.vy;
-            if (ms.y < ms.minY || ms.y > ms.maxY) ms.vy *= -1;
-            if (isColliding(player, ms)) { playSound('hit'); resetAllGhosts(); }
-        }
-    }
-
-    if (stg.movingEnemies) {
-        for (let me of stg.movingEnemies) {
-            me.x += me.vx;
-            if (me.x < me.minX || me.x > me.maxX) me.vx *= -1;
-            if (isColliding(player, me)) { playSound('hit'); resetAllGhosts(); }
-        }
-    }
-
-    bulletTimer++;
-    if (bulletTimer > 90) {
-        bulletTimer = 0;
-        if (stg.shooterEnemies) {
-            for (let se of stg.shooterEnemies) {
-                bullets.push({ x: se.x, y: se.y + 10, w: 10, h: 6, vx: se.dir === 'left' ? -4 : 4 });
-            }
-        }
-    }
-    for (let i = bullets.length - 1; i >= 0; i--) {
-        let b = bullets[i];
-        b.x += b.vx;
-        if (isColliding(player, b)) { playSound('hit'); resetAllGhosts(); bullets.splice(i, 1); continue; }
-        let hitMap = false;
-        for (let mapB of stg.map) { if (isColliding(b, mapB)) { hitMap = true; break; } }
-        if (hitMap || b.x < 0 || b.x > canvas.width) { bullets.splice(i, 1); }
-    }
-
-    if (stg.switches) {
-        for (let sw of stg.switches) {
-            if (isColliding(player, sw) || ghosts.some(g => g.state === 'STOPPED' && isColliding(g, sw))) {
-                sw.pressed = true;
-                if (stg.doors) {
-                    stg.doors.forEach(d => { if (d.id === sw.targetDoorId) d.open = true; });
+    if (!isPressingDown && player.vy >= 0) {
+        for (let g of ghosts) {
+            if (g.state === 'STOPPED') {
+                if (player.x < g.x + g.w && player.x + player.w > g.x &&
+                    player.prevY + player.h <= g.y + 8 && player.y + player.h >= g.y) {
+                    player.y = g.y - player.h;
+                    player.vy = 0;
+                    player.isGrounded = true;
                 }
             }
         }
     }
 
-    if (player.y > canvas.height + 50) resetAllGhosts();
-    for (let s of stg.spikes) { if (isColliding(player, s)) { playSound('hit'); resetAllGhosts(); } }
+    if (player.y <= 20) respawnPlayer();
+    for (let s of stg.spikes) {
+        if (isColliding(player, s)) respawnPlayer();
+    }
+    if (player.y > canvas.height + 50) respawnPlayer();
+    for (let ms of stg.movingSpikes) {
+        ms.y += ms.vy;
+        if (ms.y < ms.minY || ms.y > ms.maxY) ms.vy *= -1;
+        if (isColliding(player, ms)) respawnPlayer();
+    }
+    for (let me of stg.movingEnemies) {
+        me.x += me.vx;
+        if (me.x < me.minX || me.x > me.maxX) me.vx *= -1;
+        if (isColliding(player, me)) respawnPlayer();
+    }
 
-    if (isRecording) recordedFrames.push({ x: player.x, y: player.y });
+    bulletTimer++;
+    if (bulletTimer % 120 === 0) {
+        for (let se of stg.shooterEnemies) {
+            if (se.dir === 'up') {
+                bullets.push({ x: se.x + se.w / 2, y: se.y, r: 6, vx: 0, vy: -3.5, life: 0 });
+            } else if (se.dir === 'down') {
+                bullets.push({ x: se.x + se.w / 2, y: se.y + se.h, r: 6, vx: 0, vy: 3.5, life: 0 });
+            } else {
+                bullets.push({ x: se.x, y: se.y + 10, r: 6, vx: -3.5, vy: 0, life: 0 });
+            }
+        }
+    }
+
+    for (let i = bullets.length - 1; i >= 0; i--) {
+        let b = bullets[i];
+        b.x += b.vx;
+        b.y += b.vy;
+        b.life++;
+
+        if (b.life >= 600) {
+            bullets.splice(i, 1);
+            continue;
+        }
+
+        if (b.x - b.r <= 0) { b.x = b.r; b.vx = Math.abs(b.vx); }
+        else if (b.x + b.r >= canvas.width) { b.x = canvas.width - b.r; b.vx = -Math.abs(b.vx); }
+        if (b.y - b.r <= 0) { b.y = b.r; b.vy = Math.abs(b.vy); }
+        else if (b.y + b.r >= canvas.height) { b.y = canvas.height - b.r; b.vy = -Math.abs(b.vy); }
+
+        let collisionBlocks = [...stg.map];
+        for (let d of stg.doors) {
+            if (!d.open) collisionBlocks.push(d);
+        }
+
+        for (let block of collisionBlocks) {
+            let testX = b.x, testY = b.y;
+            if (b.x < block.x) testX = block.x;
+            else if (b.x > block.x + block.w) testX = block.x + block.w;
+            if (b.y < block.y) testY = block.y;
+            else if (b.y > block.y + block.h) testY = block.y + block.h;
+
+            let distX = b.x - testX, distY = b.y - testY;
+            let distance = Math.sqrt(distX * distX + distY * distY);
+
+            if (distance < b.r) {
+                if (distance > 0) {
+                    let nx = distX / distance, ny = distY / distance;
+                    let overlap = b.r - distance;
+                    b.x += nx * overlap; b.y += ny * overlap;
+                    let dot = b.vx * nx + b.vy * ny;
+                    b.vx -= 2 * dot * nx; b.vy -= 2 * dot * ny;
+                } else {
+                    b.y -= b.r; b.vy *= -1;
+                }
+            }
+        }
+
+        for (let g of ghosts) {
+            if (g.state === 'STOPPED') {
+                let testX = b.x, testY = b.y;
+                if (b.x < g.x) testX = g.x;
+                else if (b.x > g.x + g.w) testX = g.x + g.w;
+                if (b.y < g.y) testY = g.y;
+                else if (b.y > g.y + g.h) testY = g.y + g.h;
+
+                let distX = b.x - testX, distY = b.y - testY;
+                let distance = Math.sqrt(distX * distX + distY * distY);
+
+                if (distance < b.r) {
+                    if (distance > 0) {
+                        let nx = distX / distance, ny = distY / distance;
+                        let overlap = b.r - distance;
+                        b.x += nx * overlap; b.y += ny * overlap;
+                    } else {
+                        b.y -= b.r;
+                    }
+                    const speed = 4.0;
+                    let angleDeg = (b.vx < 0) ? (30 + Math.random() * 120) : (210 + Math.random() * 120);
+                    const rad = angleDeg * Math.PI / 180;
+                    b.vx = Math.sin(rad) * speed; b.vy = -Math.cos(rad) * speed;
+                    break;
+                }
+            }
+        }
+
+        let bulletBox = { x: b.x - b.r, y: b.y - b.r, w: b.r * 2, h: b.r * 2 };
+        if (isColliding(bulletBox, barrier)) {
+            createBulletDestroyEffect(b.x, b.y);
+            bullets.splice(i, 1);
+            continue;
+        }
+        if (isColliding(player, bulletBox)) {
+            respawnPlayer();
+            bullets.splice(i, 1);
+            continue;
+        }
+    }
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+        let p = particles[i];
+        p.x += p.vx; p.y += p.vy; p.life--;
+        if (p.life <= 0) particles.splice(i, 1);
+    }
+
+    if (isRecording) {
+        recordedFrames.push({ x: player.x, y: player.y });
+    }
 
     for (let g of ghosts) {
         if (g.state === 'REPLAYING') {
             g.progress += ghostSpeedRatio;
             const index = Math.floor(g.progress);
-            if (index < g.frames.length) { g.x = g.frames[index].x; g.y = g.frames[index].y; }
-            else { g.progress = 0; }
+            if (index < g.frames.length) {
+                g.x = g.frames[index].x;
+                g.y = g.frames[index].y;
+            } else {
+                g.progress = 0;
+            }
         }
     }
 
     if (isColliding(player, stg.goal)) {
         playSound('clear');
         if (currentStageIndex < stages.length - 1) {
-            currentStageIndex++; resetAllGhosts();
+            alert(`STAGE ${currentStageIndex + 1} CLEAR! 次のステージへ進みます。`);
+            currentStageIndex++;
+            resetAllGhosts();
         } else {
-            alert('ALL STAGES CLEAR!');
-            currentStageIndex = 0; resetAllGhosts();
+            alert(`ALL STAGES CLEAR!\nクリアタイム: ${formatTime(elapsedTime)}`);
+            currentStageIndex = 0;
+            startTime = Date.now();
+            resetAllGhosts();
         }
     }
 }
@@ -849,62 +1200,77 @@ function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const stg = getCurrentStage();
 
+    ctx.fillStyle = 'rgba(0, 200, 255, 0.15)';
+    for (let w of stg.windZones) ctx.fillRect(w.x, w.y, w.w, w.h);
+
     ctx.fillStyle = '#262938';
     for (let b of stg.map) ctx.fillRect(b.x, b.y, b.w, b.h);
 
-    if (stg.doors) {
-        ctx.fillStyle = '#00e5ff';
-        for (let d of stg.doors) {
-            if (!d.open) ctx.fillRect(d.x, d.y, d.w, d.h);
+    ctx.fillStyle = barrier.color;
+    ctx.fillRect(barrier.x, barrier.y, barrier.w, barrier.h);
+    ctx.strokeStyle = barrier.borderColor;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(barrier.x, barrier.y, barrier.w, barrier.h);
+
+    for (let d of stg.doors) {
+        if (!d.open) {
+            ctx.fillStyle = '#ff9900';
+            ctx.fillRect(d.x, d.y, d.w, d.h);
         }
     }
 
-    if (stg.switches) {
-        for (let sw of stg.switches) {
-            ctx.fillStyle = sw.pressed ? '#00ffcc' : '#ffcc00';
-            ctx.fillRect(sw.x, sw.y, sw.w, sw.h);
-        }
+    for (let sw of stg.switches) {
+        ctx.fillStyle = sw.pressed ? '#00ffcc' : '#ff3366';
+        ctx.fillRect(sw.x, sw.y, sw.w, sw.h);
     }
 
     ctx.fillStyle = '#ff3333';
-    for (let s of stg.spikes) ctx.fillRect(s.x, s.y, s.w, s.h);
-    if (stg.movingSpikes) {
-        for (let ms of stg.movingSpikes) ctx.fillRect(ms.x, ms.y, ms.w, ms.h);
+    for (let x = 0; x < canvas.width; x += 20) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x + 10, 20); ctx.lineTo(x + 20, 0); ctx.fill();
+    }
+    for (let s of stg.spikes) {
+        for (let x = s.x; x < s.x + s.w; x += 15) {
+            ctx.beginPath(); ctx.moveTo(x, s.y + s.h); ctx.lineTo(x + 7.5, s.y); ctx.lineTo(x + 15, s.y + s.h); ctx.fill();
+        }
+    }
+    ctx.fillStyle = '#ff00aa';
+    for (let ms of stg.movingSpikes) ctx.fillRect(ms.x, ms.y, ms.w, ms.h);
+
+    ctx.fillStyle = '#ff3333';
+    for (let se of stg.shooterEnemies) ctx.fillRect(se.x, se.y, se.w, se.h);
+    ctx.fillStyle = '#aa00ff';
+    for (let me of stg.movingEnemies) ctx.fillRect(me.x, me.y, me.w, me.h);
+
+    ctx.fillStyle = '#ff9900';
+    for (let b of bullets) {
+        ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill();
     }
 
-    if (stg.windZones) {
-        ctx.fillStyle = 'rgba(0, 255, 204, 0.08)';
-        for (let w of stg.windZones) ctx.fillRect(w.x, w.y, w.w, w.h);
-    }
+    ctx.fillStyle = '#00ffff';
+    for (let p of particles) ctx.fillRect(p.x, p.y, 3, 3);
 
     ctx.fillStyle = '#ffcc00';
     ctx.fillRect(stg.goal.x, stg.goal.y, stg.goal.w, stg.goal.h);
 
-    if (stg.shooterEnemies) {
-        ctx.fillStyle = '#ff0055';
-        for (let se of stg.shooterEnemies) ctx.fillRect(se.x, se.y, se.w, se.h);
-    }
-    if (stg.movingEnemies) {
-        ctx.fillStyle = '#ff0055';
-        for (let me of stg.movingEnemies) ctx.fillRect(me.x, me.y, me.w, me.h);
-    }
-
-    ctx.fillStyle = '#ffff00';
-    for (let b of bullets) ctx.fillRect(b.x, b.y, b.w, b.h);
-
     for (let g of ghosts) {
         if (g.state === 'STOPPED') {
-            ctx.fillStyle = '#9933ff'; ctx.fillRect(g.x, g.y, g.w, g.h);
+            ctx.fillStyle = '#9933ff'; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2;
+            ctx.fillRect(g.x, g.y, g.w, g.h); ctx.strokeRect(g.x, g.y, g.w, g.h);
+            ctx.fillStyle = '#00ffcc'; ctx.fillRect(g.x, g.y, g.w, 3);
         } else if (g.state === 'REPLAYING') {
             ctx.fillStyle = 'rgba(255, 50, 150, 0.7)'; ctx.fillRect(g.x, g.y, g.w, g.h);
+        } else {
+            ctx.fillStyle = 'rgba(250, 250, 250, 0.3)'; ctx.fillRect(g.x, g.y, g.w, g.h);
         }
     }
 
     ctx.fillStyle = player.color;
     ctx.fillRect(player.x, player.y, player.w, player.h);
 
-    ctx.fillStyle = '#ffffff'; ctx.font = '14px monospace';
-    ctx.fillText(`STAGE: ${currentStageIndex + 1}/3`, 25, 30);
+    ctx.fillStyle = '#ffffff'; ctx.font = '16px monospace'; ctx.textAlign = 'left';
+    ctx.fillText(`TIME: ${formatTime(elapsedTime)}  STAGE: ${currentStageIndex + 1}/3`, 25, 35);
+    ctx.fillStyle = '#00e5ff';
+    ctx.fillText(`ゴースト速度: (${ghostSpeedRatio.toFixed(1)}倍)`, 25, 60);
 }
 
 function loop() {
@@ -912,6 +1278,7 @@ function loop() {
     draw();
     requestAnimationFrame(loop);
 }
+
 loop();
 </script>
 </body>
