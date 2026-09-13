@@ -24,6 +24,12 @@
         h1 {
             font-size: 22px;
             margin: 5px 0;
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.2s;
+        }
+        h1:hover {
+            color: #ff0055;
         }
         canvas {
             background-color: #161823;
@@ -132,7 +138,7 @@
 </head>
 <body>
 
-    <h1>Ghost Action</h1>
+    <h1 id="gameTitle">Ghost Action</h1>
     <div class="status" id="statusText">操作: [R] 録画 | [Space] 再生/停止 | [Q/E] 速度変更</div>
     <canvas id="gameCanvas" width="800" height="450"></canvas>
 
@@ -171,6 +177,7 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const statusText = document.getElementById('statusText');
 const devPanel = document.getElementById('devPanel');
+const gameTitle = document.getElementById('gameTitle');
 
 const gravity = 0.45;
 const keys = {};
@@ -186,9 +193,9 @@ let ghostSpeedRatio = 0.5;
 
 // デベロッパーモード用変数
 let devModeUnlocked = false;
-let cPressCount = 0;
-let spacePressCount = 0;
-let devState = 0; // 0: C待ち, 1: スペース待ち
+let titleClickCount = 0;
+let goalClickCount = 0;
+let devStep = 0; // 0: タイトルクリック待ち, 1: ゴールクリック待ち
 
 const barrier = {
     x: 100, y: 280, w: 15, h: 120,
@@ -200,43 +207,67 @@ let startTime = Date.now();
 let elapsedTime = 0;
 let currentStageIndex = 0;
 
+// --- タイトルクリック判定 (5回) ---
+gameTitle.addEventListener('click', () => {
+    if (devModeUnlocked) return;
+    
+    if (devStep === 0) {
+        titleClickCount++;
+        updateStatus(`タイトルクリック中... (${titleClickCount}/5)`);
+        if (titleClickCount >= 5) {
+            devStep = 1;
+            updateStatus('タイトル5回クリア！ 次は画面内の「黄色いゴール（ドア）」を5回クリックしてください');
+        }
+    } else {
+        resetDevSequence();
+    }
+});
+
+// --- キャンバス（ゴール）クリック判定 (5回) ---
+canvas.addEventListener('click', (e) => {
+    if (devModeUnlocked) return;
+
+    const rect = canvas.getBoundingClientRect();
+    // キャンバス上の実座標に変換
+    const clickX = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const clickY = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+    const stg = getCurrentStage();
+    const goal = stg.goal;
+
+    // ゴール（ドア）の範囲内をクリックしたか判定
+    const isInsideGoal = clickX >= goal.x && clickX <= goal.x + goal.w &&
+                         clickY >= goal.y && clickY <= goal.y + goal.h;
+
+    if (devStep === 1) {
+        if (isInsideGoal) {
+            goalClickCount++;
+            updateStatus(`ゴールクリック中... (${goalClickCount}/5)`);
+            if (goalClickCount >= 5) {
+                devModeUnlocked = true;
+                devPanel.classList.add('active');
+                updateStatus('🔧 デベロッパーモードが有効になりました');
+            }
+        } else {
+            // ゴール以外の場所をクリックしたらリセット
+            resetDevSequence();
+        }
+    } else {
+        // ステップ0の時にキャンバスをクリックしたらリセット
+        resetDevSequence();
+    }
+});
+
+function resetDevSequence() {
+    if (devModeUnlocked) return;
+    titleClickCount = 0;
+    goalClickCount = 0;
+    devStep = 0;
+    updateStatus('操作: [R] 録画 | [Space] 再生/停止 | [Q/E] 速度変更');
+}
+
 // --- キーボード入力イベント ---
 window.addEventListener('keydown', e => {
-    // デベロッパーモードの入力判定 (C 5回 -> スペース 5回)
-    if (!devModeUnlocked) {
-        if (e.code === 'KeyC' && !e.repeat) {
-            if (devState === 0) {
-                cPressCount++;
-                updateStatus(`Cキー入力中... (${cpressCountText()}/5)`);
-                if (cPressCount >= 5) {
-                    devState = 1; // 次はスペースへ
-                    updateStatus('Cキー5回完了！次はSpaceキーを5回押してください');
-                }
-            } else {
-                // 順番違いの場合はリセット
-                resetDevSequence();
-            }
-            e.preventDefault();
-            return;
-        }
-        if (e.code === 'Space' && !e.repeat) {
-            if (devState === 1) {
-                spacePressCount++;
-                updateStatus(`Spaceキー入力中... (${spacePressCount}/5)`);
-                if (spacePressCount >= 5) {
-                    devModeUnlocked = true;
-                    devPanel.classList.add('active');
-                    updateStatus('🔧 デベロッパーモードが有効になりました');
-                }
-            } else {
-                // 順番違いの場合はリセット
-                resetDevSequence();
-            }
-            e.preventDefault();
-            return;
-        }
-    }
-
     if (e.code === 'KeyR' && !e.repeat) toggleRecording();
     if (e.code === 'Space' && !e.repeat) { togglePlayback(); e.preventDefault(); }
     if (e.code === 'KeyC' && !e.repeat) resetAllGhosts();
@@ -246,17 +277,6 @@ window.addEventListener('keydown', e => {
 
     keys[e.code] = true;
 });
-
-function cpressCountText() {
-    return cPressCount;
-}
-
-function resetDevSequence() {
-    cPressCount = 0;
-    spacePressCount = 0;
-    devState = 0;
-    updateStatus('操作: [R] 録画 | [Space] 再生/停止 | [Q/E] 速度変更');
-}
 window.addEventListener('keyup', e => keys[e.code] = false);
 
 function changeSpeed(delta) {
