@@ -57,29 +57,29 @@
             to { transform: rotate(90deg) scale(1.2); }
         }
 
-        /* ゲーム画面全体を包むラッパー */
+        /* ゲーム画面全体を包むラッパー（縦幅をスリム化） */
         #gameWrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             width: 840px;
-            height: 520px;
+            height: 460px;
             transform-origin: center center;
             flex-shrink: 0;
         }
 
         h1 {
-            font-size: 16px;
-            margin: 2px 0;
+            font-size: 14px;
+            margin: 1px 0;
             cursor: pointer;
         }
         .status {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
             color: #ff0055;
-            height: 16px;
-            margin: 2px 0;
+            height: 14px;
+            margin: 1px 0;
         }
 
         /* スイッチ風コンソールエリア */
@@ -88,9 +88,9 @@
             justify-content: space-between;
             align-items: center;
             width: 820px;
-            margin: 4px auto;
+            margin: 2px auto;
             padding: 0 4px;
-            gap: 8px;
+            gap: 6px;
         }
         .console-container.reverse {
             flex-direction: row-reverse;
@@ -118,7 +118,7 @@
             display: none;
             background: #262938;
             border: 2px solid #ffcc00;
-            padding: 4px;
+            padding: 2px;
             margin: 2px 0;
             border-radius: 6px;
             width: 780px;
@@ -127,18 +127,18 @@
             display: block;
         }
         
-        /* 十字キー部分（3x3グリッド） */
+        /* 十字キー部分（3x3グリッド）をコンパクトに */
         .d-pad {
             display: grid;
-            grid-template-columns: 46px 46px 46px;
-            grid-template-rows: 42px 42px 42px;
+            grid-template-columns: 42px 42px 42px;
+            grid-template-rows: 38px 38px 38px;
             gap: 2px;
             justify-content: center;
             align-content: center;
             flex-shrink: 0;
             background: rgba(26, 28, 38, 0.8);
-            padding: 6px;
-            border-radius: 10px;
+            padding: 4px;
+            border-radius: 8px;
             border: 1px solid #00ffcc33;
         }
         .d-btn {
@@ -151,7 +151,7 @@
             justify-content: center;
             align-items: center;
             box-shadow: 0 2px 0 #008866;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
             transition: transform 0.05s, box-shadow 0.05s;
         }
@@ -175,29 +175,29 @@
             height: 0;
             border-style: solid;
         }
-        .arrow-up { border-width: 0 6px 9px 6px; border-color: transparent transparent currentColor transparent; }
-        .arrow-down { border-width: 9px 6px 0 6px; border-color: currentColor transparent transparent transparent; }
-        .arrow-left { border-width: 6px 9px 6px 0; border-color: transparent currentColor transparent transparent; }
-        .arrow-right { border-width: 6px 0 6px 9px; border-color: transparent transparent transparent currentColor; }
+        .arrow-up { border-width: 0 5px 8px 5px; border-color: transparent transparent currentColor transparent; }
+        .arrow-down { border-width: 8px 5px 0 5px; border-color: currentColor transparent transparent transparent; }
+        .arrow-left { border-width: 5px 8px 5px 0; border-color: transparent currentColor transparent transparent; }
+        .arrow-right { border-width: 5px 0 5px 8px; border-color: transparent transparent transparent currentColor; }
 
-        /* 右側に配置するアクションボタン群 ＋ 左右反転ボタン */
+        /* 右側に配置するアクションボタン群をコンパクトに */
         .action-pad {
             display: grid;
-            grid-template-columns: repeat(2, 44px);
-            grid-template-rows: repeat(3, 40px);
-            gap: 3px;
+            grid-template-columns: repeat(2, 42px);
+            grid-template-rows: repeat(3, 37px);
+            gap: 2px;
             justify-content: center;
             flex-shrink: 0;
             background: rgba(26, 28, 38, 0.8);
-            padding: 6px;
-            border-radius: 10px;
+            padding: 4px;
+            border-radius: 8px;
             border: 1px solid #ff005533;
         }
         .btn {
             background-color: #262938;
             color: #fff;
             border: 2px solid #ff0055;
-            font-size: 9px;
+            font-size: 8px;
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
@@ -205,7 +205,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 1px;
+            padding: 0px;
             box-shadow: 0 2px 0 #88002d;
             transition: transform 0.05s, box-shadow 0.05s;
         }
@@ -221,7 +221,7 @@
         #btnSpeedUp  { grid-column: 2; grid-row: 2; }
         #btnReset    { grid-column: 1; grid-row: 3; border-color: #ff3333; box-shadow: 0 2px 0 #880000; }
         #btnReset:active, #btnReset.active { background-color: #ff3333; box-shadow: 0 0 0 #880000; }
-        #btnSwap     { grid-column: 2; grid-row: 3; border-color: #00ccff; color: #00ccff; box-shadow: 0 2px 0 #005588; font-size: 9px; }
+        #btnSwap     { grid-column: 2; grid-row: 3; border-color: #00ccff; color: #00ccff; box-shadow: 0 2px 0 #005588; font-size: 8px; }
         #btnSwap:active, #btnSwap.active { background-color: #00ccff; color: #0d0e15; box-shadow: 0 0 0 #005588; }
     </style>
 </head>
@@ -252,11 +252,11 @@
             <!-- 左側のコントローラー -->
             <div class="d-pad" id="dPadArea">
                 <button class="d-btn" id="btnUpLeft">
-                    <div style="display:flex; gap:1px; align-items:center;"><div class="arrow-icon arrow-left" style="transform:scale(0.6);"></div><div class="arrow-icon arrow-up" style="transform:scale(0.6);"></div></div>
+                    <div style="display:flex; gap:1px; align-items:center;"><div class="arrow-icon arrow-left" style="transform:scale(0.5);"></div><div class="arrow-icon arrow-up" style="transform:scale(0.5);"></div></div>
                 </button>
                 <button class="d-btn" id="btnJump"><div class="arrow-icon arrow-up"></div></button>
                 <button class="d-btn" id="btnUpRight">
-                    <div style="display:flex; gap:1px; align-items:center;"><div class="arrow-icon arrow-up" style="transform:scale(0.6);"></div><div class="arrow-icon arrow-right" style="transform:scale(0.6);"></div></div>
+                    <div style="display:flex; gap:1px; align-items:center;"><div class="arrow-icon arrow-up" style="transform:scale(0.5);"></div><div class="arrow-icon arrow-right" style="transform:scale(0.5);"></div></div>
                 </button>
                 <button class="d-btn" id="btnLeft"><div class="arrow-icon arrow-left"></div></button>
                 <button class="d-btn" id="btnRight"><div class="arrow-icon arrow-right"></div></button>
@@ -281,12 +281,12 @@
     </div>
 
 <script>
-// スマホのときだけさらに大きく拡大するスケーリング処理
+// スマホでも見切れないように高さを調整したスケーリング処理
 function autoResize() {
     const wrapper = document.getElementById('gameWrapper');
     const warning = document.getElementById('rotateWarning');
     const baseWidth = 840;
-    const baseHeight = 520;
+    const baseHeight = 460; // 縦幅をスリム化
 
     // モバイル端末判定
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.innerWidth <= 1024);
@@ -305,10 +305,10 @@ function autoResize() {
     const scaleY = clientHeight / baseHeight;
     let scale = Math.min(scaleX, scaleY);
 
-    // スマホ（横幅が狭い端末など）と判断された場合は、さらに1.35倍大きく拡大
+    // スマホ（横幅が狭い端末）の場合、大きくしすぎではみ出さないよう1.15倍に調整
     const isMobileSize = clientWidth <= 900;
     if (isMobileSize) {
-        scale *= 1.35;
+        scale *= 1.15;
     }
 
     wrapper.style.transform = `scale(${scale})`;
