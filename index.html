@@ -63,15 +63,15 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 960px;
-            height: 480px;
+            width: 1100px;
+            height: 520px;
             transform-origin: center center;
             flex-shrink: 0;
         }
 
         h1 {
             font-size: 13px;
-            margin: 1px 0;
+            margin: 2px 0;
             cursor: pointer;
         }
         .status {
@@ -79,7 +79,7 @@
             font-weight: bold;
             color: #ff0055;
             height: 14px;
-            margin: 1px 0;
+            margin: 2px 0;
         }
 
         /* スイッチ風コンソールエリア */
@@ -87,23 +87,23 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 940px;
+            width: 1080px;
             margin: 2px auto;
             padding: 0 4px;
-            gap: 6px;
+            gap: 12px;
         }
         .console-container.reverse {
             flex-direction: row-reverse;
         }
 
-        /* ゲーム画面（キャンバス）のラッパー */
+        /* ゲーム画面（キャンバス）のラッパー：スマホでも極限まで広くする */
         .canvas-container {
             position: relative;
             flex-grow: 1;
-            width: 660px;
+            width: 780px; 
             aspect-ratio: 16 / 9;
-            box-shadow: 0 0 15px rgba(255, 0, 85, 0.3);
-            border-radius: 6px;
+            box-shadow: 0 0 20px rgba(255, 0, 85, 0.4);
+            border-radius: 8px;
             overflow: hidden;
             border: 2px solid #ff0055;
             background-color: #161823;
@@ -121,13 +121,13 @@
             padding: 2px;
             margin: 2px 0;
             border-radius: 6px;
-            width: 880px;
+            width: 1000px;
         }
         .dev-panel.active {
             display: block;
         }
         
-        /* 十字キー部分（デフォルト・PC用） */
+        /* 十字キー部分（PC用デフォルト） */
         .d-pad {
             display: grid;
             grid-template-columns: 42px 42px 42px;
@@ -180,7 +180,7 @@
         .arrow-left { border-width: 5px 8px 5px 0; border-color: transparent currentColor transparent transparent; }
         .arrow-right { border-width: 5px 0 5px 8px; border-color: transparent transparent transparent currentColor; }
 
-        /* アクションボタン群（デフォルト・PC用） */
+        /* アクションボタン群（PC用デフォルト） */
         .action-pad {
             display: grid;
             grid-template-columns: repeat(2, 42px);
@@ -224,17 +224,20 @@
         #btnSwap     { grid-column: 2; grid-row: 3; border-color: #00ccff; color: #00ccff; box-shadow: 0 2px 0 #005588; font-size: 8px; }
         #btnSwap:active, #btnSwap.active { background-color: #00ccff; color: #0d0e15; box-shadow: 0 0 0 #005588; }
 
-        /* スマホ専用レイアウト：ボタンサイズは変えず、ステージ枠をさらに限界まで拡大 */
+        /* スマホ専用レイアウト：ボタンの大きさは以前の押しやすい特大サイズのまま、ステージ枠を限界まで拡大 */
         @media screen and (max-width: 900px) {
+            #gameWrapper {
+                width: 1120px;
+            }
             .console-container {
-                width: 940px;
-                gap: 2px;
-                padding: 0;
+                width: 1100px;
+                gap: 8px;
             }
-            /* ステージ枠をさらに大きく限界まで広げる */
+            /* ステージの枠（キャンバス）を画面いっぱいに広げる */
             .canvas-container {
-                width: 660px; 
+                width: 780px; 
             }
+            /* スマホ用ボタンのサイズはそのまま維持 */
             .d-pad {
                 grid-template-columns: 66px 66px 66px;
                 grid-template-rows: 60px 60px 60px;
@@ -327,8 +330,8 @@
 function autoResize() {
     const wrapper = document.getElementById('gameWrapper');
     const warning = document.getElementById('rotateWarning');
-    const baseWidth = 960;
-    const baseHeight = 480;
+    const baseWidth = 1120;
+    const baseHeight = 520;
 
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.innerWidth <= 1024);
     const isPortrait = window.innerHeight > window.innerWidth;
