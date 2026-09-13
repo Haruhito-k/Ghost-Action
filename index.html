@@ -53,7 +53,7 @@
             to { transform: rotate(90deg) scale(1.2); }
         }
 
-        /* スタート画面（タイトル画面） */
+        /* スタート画面 */
         #startScreen {
             position: fixed;
             top: 0;
@@ -554,6 +554,16 @@ window.addEventListener('keydown', e => {
     keys[e.code] = true;
 });
 window.addEventListener('keyup', e => keys[e.code] = false);
+
+let titleClickCount = 0;
+document.getElementById('gameTitle').addEventListener('click', () => {
+    titleClickCount++;
+    if (titleClickCount >= 5) {
+        document.getElementById('devPanel').classList.toggle('active');
+        statusText.innerText = '🔧 デベロッパーモード切替';
+        titleClickCount = 0;
+    }
+});
 
 function selectStage(index) {
     currentStageIndex = index;
