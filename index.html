@@ -82,13 +82,21 @@
             margin: 2px 0;
         }
 
+        /* 上部バー（カラー選択 ＋ 遊び方ボタン） */
+        .top-bar-area {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            justify-content: center;
+            margin: 2px 0;
+        }
+
         /* カラー選択バー */
         .color-picker-bar {
             display: flex;
             gap: 6px;
             align-items: center;
             justify-content: center;
-            margin: 2px 0;
             font-size: 9px;
             color: #aaa;
         }
@@ -109,6 +117,92 @@
             box-shadow: 0 0 6px #fff;
         }
 
+        /* 遊び方ボタン */
+        .help-btn {
+            background-color: #262938;
+            color: #00ffcc;
+            border: 2px solid #00ffcc;
+            padding: 2px 8px;
+            font-size: 9px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 2px 0 #008866;
+            transition: transform 0.05s, box-shadow 0.05s;
+        }
+        .help-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 0 0 #008866;
+            background-color: #00ffcc;
+            color: #0d0e15;
+        }
+
+        /* 遊び方説明モーダルポップアップ */
+        #helpModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100dvh;
+            background-color: rgba(13, 14, 21, 0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 99998;
+        }
+        .help-content {
+            background: #161823;
+            border: 2px solid #00ffcc;
+            border-radius: 12px;
+            width: 480px;
+            max-width: 90vw;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 20px;
+            text-align: left;
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.3);
+        }
+        .help-content h2 {
+            color: #00ffcc;
+            font-size: 16px;
+            margin-top: 0;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
+        }
+        .help-content h3 {
+            color: #ff0055;
+            font-size: 12px;
+            margin: 12px 0 4px 0;
+        }
+        .help-content p, .help-content li {
+            font-size: 11px;
+            color: #ccc;
+            line-height: 1.5;
+            margin: 4px 0;
+        }
+        .help-content ul {
+            padding-left: 16px;
+            margin: 4px 0;
+        }
+        .close-modal-btn {
+            display: block;
+            width: 100%;
+            margin-top: 16px;
+            background-color: #00ffcc;
+            color: #0d0e15;
+            border: none;
+            padding: 10px;
+            font-weight: bold;
+            font-size: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .close-modal-btn:active {
+            background-color: #00ccaa;
+        }
+
         /* スイッチ風コンソールエリア */
         .console-container {
             display: flex;
@@ -123,7 +217,7 @@
             flex-direction: row-reverse;
         }
 
-        /* ゲーム画面（キャンバス）のラッパー：ここが完全に画面中央に来る設計 */
+        /* ゲーム画面（キャンバス）のラッパー */
         .canvas-container {
             position: relative;
             width: 780px; 
@@ -154,7 +248,7 @@
             display: block;
         }
         
-        /* 十字キー部分（PC用デフォルト） */
+        /* 十字キー部分 */
         .d-pad {
             display: grid;
             grid-template-columns: 42px 42px 42px;
@@ -196,7 +290,6 @@
         #btnRight    { grid-column: 3; grid-row: 2; }
         #btnDown     { grid-column: 2; grid-row: 3; }
 
-        /* 矢印アイコン */
         .arrow-icon {
             width: 0;
             height: 0;
@@ -207,7 +300,7 @@
         .arrow-left { border-width: 5px 8px 5px 0; border-color: transparent currentColor transparent transparent; }
         .arrow-right { border-width: 5px 0 5px 8px; border-color: transparent transparent transparent currentColor; }
 
-        /* アクションボタン群（PC用デフォルト） */
+        /* アクションボタン群 */
         .action-pad {
             display: grid;
             grid-template-columns: repeat(2, 42px);
@@ -251,7 +344,7 @@
         #btnSwap     { grid-column: 2; grid-row: 3; border-color: #00ccff; color: #00ccff; box-shadow: 0 2px 0 #005588; font-size: 8px; }
         #btnSwap:active, #btnSwap.active { background-color: #00ccff; color: #0d0e15; box-shadow: 0 0 0 #005588; }
 
-        /* スマホ専用レイアウト：大きめボタンを維持しつつキャンバス中心を死守 */
+        /* スマホ専用レイアウト対応 */
         @media screen and (max-width: 900px) {
             #gameWrapper {
                 width: 1120px;
@@ -305,20 +398,57 @@
         <div style="font-size: 14px; color: #00ffcc; font-weight: normal;">端末を横向きにしてプレイしてください</div>
     </div>
 
+    <!-- 遊び方説明ポップアップモーダル -->
+    <div id="helpModal">
+        <div class="help-content">
+            <h2>📖 遊び方・ルール</h2>
+            
+            <h3>1. ゲームの目的</h3>
+            <p>自分の動きを「録画」してゴーストを作り、そのゴーストを「足場」にして高いところや障害物を乗り越え、一番奥のゴール（オレンジ色の扉）を目指すアクションパズルゲームです！</p>
+
+            <h3>2. 基本操作</h3>
+            <ul>
+                <li><b>移動：</b> 左右の矢印ボタン（または <b>A / Dキー</b>）</li>
+                <li><b>ジャンプ：</b> 上矢印ボタン または <b>W / Kキー</b>（またはW/Sの組み合わせでななめジャンプも可能）</li>
+            </ul>
+
+            <h3>3. 💡 録画とゴーストの使い方のコツ</h3>
+            <p>そのままでは届かない高い崖やトゲの上に行くために、以下の手順を使います：</p>
+            <ul>
+                <li><b>① [ 🔴 録画 ] ボタンを押す：</b> 自分の動きの録画が始まります。ジャンプして足場に飛び乗るなどの動きをさせます。</li>
+                <li><b>② もう一度 [ 🔴 録画 ] ボタンを押す（完了）：</b> 録画がストップし、自分の動きをコピーした「ゴースト」が誕生します。</li>
+                <li><b>③ [ ▶ 再生 ] ボタンを押す：</b> ゴーストが動き出します。動いている最中に<b>もう一度 [ ▶ 再生 ] ボタンを押す</b>と、その瞬間でゴーストが<b>「固定された足場」</b>に変形します！</li>
+                <li><b>④ 足場を使った攻略：</b> 固定されたゴーストの上に飛び乗ることで、通常では届かない高いエリアへ進めるようになります。</li>
+            </ul>
+
+            <h3>4. その他のボタン機能</h3>
+            <ul>
+                <li><b>Q / E（減速・加速）：</b> 再生されるゴーストのスピードを調整できます。</li>
+                <li><b>C（リセット）：</b> ゴーストやステージ状況を最初の状態に戻します。</li>
+                <li><b>⇄（入替）：</b> 左右のコントローラーの配置を入れ替えます（利き手に合わせられます）。</li>
+            </ul>
+
+            <button class="close-modal-btn" onclick="toggleHelpModal(false)">ゲームに戻る</button>
+        </div>
+    </div>
+
     <div id="gameWrapper">
         <h1 id="gameTitle">Ghost Action</h1>
         <div class="status" id="statusText">操作: [R] 録画 | [Space] 再生/停止 | [Q/E] 速度変更</div>
         
-        <!-- プレイヤーカラー選択バー（赤色を追加しました！） -->
-        <div class="color-picker-bar">
-            <span>キャラカラー:</span>
-            <div class="color-chip active" style="background-color: #00ffcc;" onclick="changePlayerColor('#00ffcc', this)"></div>
-            <div class="color-chip" style="background-color: #ff3333;" onclick="changePlayerColor('#ff3333', this)"></div>
-            <div class="color-chip" style="background-color: #ff0055;" onclick="changePlayerColor('#ff0055', this)"></div>
-            <div class="color-chip" style="background-color: #ffcc00;" onclick="changePlayerColor('#ffcc00', this)"></div>
-            <div class="color-chip" style="background-color: #00ccff;" onclick="changePlayerColor('#00ccff', this)"></div>
-            <div class="color-chip" style="background-color: #ff66ff;" onclick="changePlayerColor('#ff66ff', this)"></div>
-            <div class="color-chip" style="background-color: #ffffff;" onclick="changePlayerColor('#ffffff', this)"></div>
+        <!-- 上部バー（カラー選択 ＋ 遊び方ボタン） -->
+        <div class="top-bar-area">
+            <div class="color-picker-bar">
+                <span>キャラカラー:</span>
+                <div class="color-chip active" style="background-color: #00ffcc;" onclick="changePlayerColor('#00ffcc', this)"></div>
+                <div class="color-chip" style="background-color: #ff3333;" onclick="changePlayerColor('#ff3333', this)"></div>
+                <div class="color-chip" style="background-color: #ff0055;" onclick="changePlayerColor('#ff0055', this)"></div>
+                <div class="color-chip" style="background-color: #ffcc00;" onclick="changePlayerColor('#ffcc00', this)"></div>
+                <div class="color-chip" style="background-color: #00ccff;" onclick="changePlayerColor('#00ccff', this)"></div>
+                <div class="color-chip" style="background-color: #ff66ff;" onclick="changePlayerColor('#ff66ff', this)"></div>
+                <div class="color-chip" style="background-color: #ffffff;" onclick="changePlayerColor('#ffffff', this)"></div>
+            </div>
+            <button class="help-btn" onclick="toggleHelpModal(true)">❓ 遊び方・ルール</button>
         </div>
 
         <div class="dev-panel" id="devPanel">
@@ -346,7 +476,7 @@
                 <button class="d-btn" id="btnDown"><div class="arrow-icon arrow-down"></div></button>
             </div>
 
-            <!-- 中央のゲーム画面（ここが全体の真ん中に来る） -->
+            <!-- 中央のゲーム画面 -->
             <div class="canvas-container">
                 <canvas id="gameCanvas" width="800" height="450"></canvas>
             </div>
@@ -472,6 +602,7 @@ const statusText = document.getElementById('statusText');
 const devPanel = document.getElementById('devPanel');
 const gameTitle = document.getElementById('gameTitle');
 const consoleContainer = document.getElementById('consoleContainer');
+const helpModal = document.getElementById('helpModal');
 
 const gravity = 0.45;
 const keys = {};
@@ -503,6 +634,11 @@ let currentStageIndex = 0;
 const player = {
     x: 40, y: 350, w: 22, h: 26, vx: 0, vy: 0, prevY: 350, isGrounded: false, color: '#00ffcc'
 };
+
+function toggleHelpModal(show) {
+    initAudio();
+    helpModal.style.display = show ? 'flex' : 'none';
+}
 
 function changePlayerColor(colorHex, element) {
     initAudio();
@@ -565,6 +701,8 @@ function _z_reset() {
 }
 
 window.addEventListener('keydown', e => {
+    // モーダル表示中はキー操作を無効化
+    if (helpModal.style.display === 'flex') return;
     initAudio();
     if (e.code === 'KeyR' && !e.repeat) toggleRecording();
     if (e.code === 'Space' && !e.repeat) { togglePlayback(); e.preventDefault(); }
@@ -593,6 +731,7 @@ function bindTouchButton(id, codeNames, actionFunc) {
 
     const pressOn = (e) => {
         e.preventDefault();
+        if (helpModal.style.display === 'flex') return;
         initAudio();
         if (actionFunc) actionFunc();
         if (codeNames) {
@@ -796,6 +935,8 @@ function createBulletDestroyEffect(x, y) {
 }
 
 function update() {
+    if (helpModal.style.display === 'flex') return;
+
     elapsedTime = Date.now() - startTime;
     const stg = getCurrentStage();
     player.prevY = player.y;
