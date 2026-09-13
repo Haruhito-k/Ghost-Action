@@ -25,7 +25,6 @@
             touch-action: none;
         }
 
-        /* 横画面推奨の警告 */
         #rotateWarning {
             position: fixed;
             top: 0;
@@ -165,7 +164,6 @@
             margin: 2px 0;
         }
 
-        /* カラー選択バー（赤色削除済み） */
         .color-picker-bar {
             display: flex;
             gap: 6px;
@@ -343,16 +341,6 @@
         #btnRight    { grid-column: 3; grid-row: 2; }
         #btnDown     { grid-column: 2; grid-row: 3; }
 
-        .arrow-icon {
-            width: 0;
-            height: 0;
-            border-style: solid;
-        }
-        .arrow-up { border-width: 0 5px 8px 5px; border-color: transparent transparent currentColor transparent; }
-        .arrow-down { border-width: 8px 5px 0 5px; border-color: currentColor transparent transparent transparent; }
-        .arrow-left { border-width: 5px 8px 5px 0; border-color: transparent currentColor transparent transparent; }
-        .arrow-right { border-width: 5px 0 5px 8px; border-color: transparent transparent transparent currentColor; }
-
         .action-pad {
             display: grid;
             grid-template-columns: repeat(2, 42px);
@@ -401,7 +389,7 @@
         <div style="font-size: 14px; color: #00ffcc; font-weight: normal;">端末を横向きにしてプレイしてください</div>
     </div>
 
-    <!-- スタート画面（ページを開いたときに最初に表示されます） -->
+    <!-- スタート画面 -->
     <div id="startScreen">
         <div class="start-box">
             <h1>👻 Ghost Action</h1>
@@ -425,6 +413,10 @@
             <h2>📖 遊び方・ルール</h2>
             <h3>1. ゲームの目的</h3>
             <p>自分の動きを「録画」してゴーストを作り、そのゴーストを「足場」にして一番奥のゴール（オレンジ色の扉）を目指すアクションパズルです。</p>
+            <h3>2. 基本操作</h3>
+            <p><b>[ 🔴 録画 ]</b>：プレイヤーの動きの録画を開始/停止します。</p>
+            <p><b>[ ▶ 再生 ]</b>：録画したゴーストを動かします。再生中にもう一度押すと、その場で固定された「足場」になります。</p>
+            <p><b>[ ⇄ 入替 ]</b>：左右のコントローラーと画面の位置を入れ替えます。</p>
             <button class="close-modal-btn" onclick="toggleHelpModal(false)">閉じる</button>
         </div>
     </div>
@@ -434,7 +426,7 @@
         <div class="status" id="statusText">操作: [R] 録画 | [Space] 再生/停止 | [Q/E] 速度変更</div>
         
         <div class="top-bar-area">
-            <!-- カラー選択バー（赤色を完全に削除） -->
+            <!-- 赤色を削除したカラー選択バー -->
             <div class="color-picker-bar">
                 <span>キャラカラー:</span>
                 <div class="color-chip active" style="background-color: #00ffcc;" onclick="changePlayerColor('#00ffcc', this)"></div>
@@ -503,6 +495,12 @@ function playSound(type) {
             osc.frequency.setValueAtTime(300, now);
             gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
             osc.start(now); osc.stop(now + 0.3);
+        } else if (type === 'hit') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(120, now);
+            osc.frequency.exponentialRampToValueAtTime(40, now + 0.2);
+            gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+            osc.start(now); osc.stop(now + 0.2);
         }
     } catch(e) {}
 }
@@ -535,7 +533,6 @@ let elapsedTime = 0;
 let currentStageIndex = 0;
 
 const player = { x: 40, y: 350, w: 22, h: 26, vx: 0, vy: 0, prevY: 350, isGrounded: false, color: '#00ffcc' };
-const barrier = { x: 100, y: 280, w: 15, h: 120, color: 'rgba(0, 229, 255, 0.6)', borderColor: '#00e5ff' };
 
 function toggleHelpModal(show) { initAudio(); helpModal.style.display = show ? 'flex' : 'none'; }
 function changePlayerColor(colorHex, element) {
@@ -552,6 +549,8 @@ window.addEventListener('keydown', e => {
     if (e.code === 'KeyR' && !e.repeat) toggleRecording();
     if (e.code === 'Space' && !e.repeat) { togglePlayback(); e.preventDefault(); }
     if (e.code === 'KeyC' && !e.repeat) resetAllGhosts();
+    if (e.code === 'KeyQ') ghostSpeedRatio = Math.max(0.1, ghostSpeedRatio - 0.1);
+    if (e.code === 'KeyE') ghostSpeedRatio = Math.min(2.0, ghostSpeedRatio + 0.1);
     keys[e.code] = true;
 });
 window.addEventListener('keyup', e => keys[e.code] = false);
@@ -722,6 +721,14 @@ function update() {
             else if (player.vx < 0) player.x = b.x + b.w;
         }
     }
+    if (stg.doors) {
+        for (let d of stg.doors) {
+            if (!d.open && isColliding(player, d)) {
+                if (player.vx > 0) player.x = d.x - player.w;
+                else if (player.vx < 0) player.x = d.x + d.w;
+            }
+        }
+    }
 
     player.y += player.vy;
     player.isGrounded = false;
@@ -729,6 +736,14 @@ function update() {
         if (isColliding(player, b)) {
             if (player.vy > 0) { player.y = b.y - player.h; player.vy = 0; player.isGrounded = true; }
             else if (player.vy < 0) { player.y = b.y + b.h; player.vy = 0; }
+        }
+    }
+    if (stg.doors) {
+        for (let d of stg.doors) {
+            if (!d.open && isColliding(player, d)) {
+                if (player.vy > 0) { player.y = d.y - player.h; player.vy = 0; player.isGrounded = true; }
+                else if (player.vy < 0) { player.y = d.y + d.h; player.vy = 0; }
+            }
         }
     }
 
@@ -741,8 +756,62 @@ function update() {
         }
     }
 
+    if (stg.windZones) {
+        for (let w of stg.windZones) {
+            if (isColliding(player, w)) {
+                player.vx += w.forceX || 0;
+                player.vy += w.forceY || 0;
+            }
+        }
+    }
+
+    if (stg.movingSpikes) {
+        for (let ms of stg.movingSpikes) {
+            ms.y += ms.vy;
+            if (ms.y < ms.minY || ms.y > ms.maxY) ms.vy *= -1;
+            if (isColliding(player, ms)) { playSound('hit'); resetAllGhosts(); }
+        }
+    }
+
+    if (stg.movingEnemies) {
+        for (let me of stg.movingEnemies) {
+            me.x += me.vx;
+            if (me.x < me.minX || me.x > me.maxX) me.vx *= -1;
+            if (isColliding(player, me)) { playSound('hit'); resetAllGhosts(); }
+        }
+    }
+
+    bulletTimer++;
+    if (bulletTimer > 90) {
+        bulletTimer = 0;
+        if (stg.shooterEnemies) {
+            for (let se of stg.shooterEnemies) {
+                bullets.push({ x: se.x, y: se.y + 10, w: 10, h: 6, vx: se.dir === 'left' ? -4 : 4 });
+            }
+        }
+    }
+    for (let i = bullets.length - 1; i >= 0; i--) {
+        let b = bullets[i];
+        b.x += b.vx;
+        if (isColliding(player, b)) { playSound('hit'); resetAllGhosts(); bullets.splice(i, 1); continue; }
+        let hitMap = false;
+        for (let mapB of stg.map) { if (isColliding(b, mapB)) { hitMap = true; break; } }
+        if (hitMap || b.x < 0 || b.x > canvas.width) { bullets.splice(i, 1); }
+    }
+
+    if (stg.switches) {
+        for (let sw of stg.switches) {
+            if (isColliding(player, sw) || ghosts.some(g => g.state === 'STOPPED' && isColliding(g, sw))) {
+                sw.pressed = true;
+                if (stg.doors) {
+                    stg.doors.forEach(d => { if (d.id === sw.targetDoorId) d.open = true; });
+                }
+            }
+        }
+    }
+
     if (player.y > canvas.height + 50) resetAllGhosts();
-    for (let s of stg.spikes) { if (isColliding(player, s)) resetAllGhosts(); }
+    for (let s of stg.spikes) { if (isColliding(player, s)) { playSound('hit'); resetAllGhosts(); } }
 
     if (isRecording) recordedFrames.push({ x: player.x, y: player.y });
 
@@ -773,11 +842,45 @@ function draw() {
     ctx.fillStyle = '#262938';
     for (let b of stg.map) ctx.fillRect(b.x, b.y, b.w, b.h);
 
+    if (stg.doors) {
+        ctx.fillStyle = '#00e5ff';
+        for (let d of stg.doors) {
+            if (!d.open) ctx.fillRect(d.x, d.y, d.w, d.h);
+        }
+    }
+
+    if (stg.switches) {
+        for (let sw of stg.switches) {
+            ctx.fillStyle = sw.pressed ? '#00ffcc' : '#ffcc00';
+            ctx.fillRect(sw.x, sw.y, sw.w, sw.h);
+        }
+    }
+
     ctx.fillStyle = '#ff3333';
     for (let s of stg.spikes) ctx.fillRect(s.x, s.y, s.w, s.h);
+    if (stg.movingSpikes) {
+        for (let ms of stg.movingSpikes) ctx.fillRect(ms.x, ms.y, ms.w, ms.h);
+    }
+
+    if (stg.windZones) {
+        ctx.fillStyle = 'rgba(0, 255, 204, 0.08)';
+        for (let w of stg.windZones) ctx.fillRect(w.x, w.y, w.w, w.h);
+    }
 
     ctx.fillStyle = '#ffcc00';
     ctx.fillRect(stg.goal.x, stg.goal.y, stg.goal.w, stg.goal.h);
+
+    if (stg.shooterEnemies) {
+        ctx.fillStyle = '#ff0055';
+        for (let se of stg.shooterEnemies) ctx.fillRect(se.x, se.y, se.w, se.h);
+    }
+    if (stg.movingEnemies) {
+        ctx.fillStyle = '#ff0055';
+        for (let me of stg.movingEnemies) ctx.fillRect(me.x, me.y, me.w, me.h);
+    }
+
+    ctx.fillStyle = '#ffff00';
+    for (let b of bullets) ctx.fillRect(b.x, b.y, b.w, b.h);
 
     for (let g of ghosts) {
         if (g.state === 'STOPPED') {
