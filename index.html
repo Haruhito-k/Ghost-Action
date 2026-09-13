@@ -19,7 +19,7 @@
             margin: 0;
             padding: 0;
             width: 100vw;
-            height: 100vh;
+            height: 100dvh;
             overflow: hidden;
             position: relative;
             touch-action: none;
@@ -31,7 +31,7 @@
             top: 0;
             left: 0;
             width: 100vw;
-            height: 100vh;
+            height: 100dvh;
             background-color: rgba(13, 14, 21, 0.98);
             color: #ff0055;
             display: none;
@@ -54,7 +54,7 @@
             to { transform: rotate(90deg) scale(1.2); }
         }
 
-        /* 画面全体の絶対中央に配置するラッパー */
+        /* 画面全体の絶対中央に配置する基準ラッパー */
         #gameWrapper {
             position: absolute;
             top: 50%;
@@ -66,7 +66,6 @@
             align-items: center;
             justify-content: center;
             width: 1100px;
-            height: 520px;
             flex-shrink: 0;
         }
 
@@ -97,10 +96,9 @@
             flex-direction: row-reverse;
         }
 
-        /* ゲーム画面（キャンバス）のラッパー */
+        /* ゲーム画面（キャンバス）のラッパー：ここが完全に画面中央に来る設計 */
         .canvas-container {
             position: relative;
-            flex-grow: 1;
             width: 780px; 
             aspect-ratio: 16 / 9;
             box-shadow: 0 0 20px rgba(255, 0, 85, 0.4);
@@ -108,6 +106,7 @@
             overflow: hidden;
             border: 2px solid #ff0055;
             background-color: #161823;
+            flex-shrink: 0;
         }
         canvas {
             display: block;
@@ -225,7 +224,7 @@
         #btnSwap     { grid-column: 2; grid-row: 3; border-color: #00ccff; color: #00ccff; box-shadow: 0 2px 0 #005588; font-size: 8px; }
         #btnSwap:active, #btnSwap.active { background-color: #00ccff; color: #0d0e15; box-shadow: 0 0 0 #005588; }
 
-        /* スマホ専用レイアウト：ボタンサイズ維持＆完全中央 */
+        /* スマホ専用レイアウト：大きめボタンを維持しつつキャンバス中心を死守 */
         @media screen and (max-width: 900px) {
             #gameWrapper {
                 width: 1120px;
@@ -308,7 +307,7 @@
                 <button class="d-btn" id="btnDown"><div class="arrow-icon arrow-down"></div></button>
             </div>
 
-            <!-- 中央のゲーム画面 -->
+            <!-- 中央のゲーム画面（ここが全体の真ん中に来る） -->
             <div class="canvas-container">
                 <canvas id="gameCanvas" width="800" height="450"></canvas>
             </div>
@@ -330,7 +329,7 @@ function autoResize() {
     const wrapper = document.getElementById('gameWrapper');
     const warning = document.getElementById('rotateWarning');
     const baseWidth = 1120;
-    const baseHeight = 520;
+    const baseHeight = 500; // 高度な余白を最適化
 
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.innerWidth <= 1024);
     const isPortrait = window.innerHeight > window.innerWidth;
@@ -348,7 +347,7 @@ function autoResize() {
     const scaleY = clientHeight / baseHeight;
     const scale = Math.min(scaleX, scaleY);
 
-    // 画面中央に配置しつつスケーリングを適用
+    // 画面中央にピタリと配置しつつスケーリング
     wrapper.style.transform = `translate(-50%, -50%) scale(${scale})`;
 }
 
