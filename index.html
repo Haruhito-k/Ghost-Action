@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ghost Action - MULTI STAGE</title>
+    <title>Ghost Action - MULTI STAGE (Switch Style)</title>
     <style>
         * {
             box-sizing: border-box;
@@ -17,38 +17,52 @@
             color: #fff;
             font-family: sans-serif;
             margin: 0;
-            padding: 4px;
+            padding: 2px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: center;
             min-height: 100vh;
             max-height: 100vh;
             overflow: hidden;
             touch-action: none;
         }
         h1 {
-            font-size: clamp(15px, 3.2vw, 19px);
-            margin: 2px 0;
+            font-size: clamp(13px, 2.5vw, 16px);
+            margin: 1px 0;
             cursor: pointer;
         }
         .status {
-            font-size: clamp(10px, 2vw, 12px);
+            font-size: clamp(9px, 1.8vw, 11px);
             font-weight: bold;
             color: #ff0055;
-            height: 16px;
-            margin: 2px 0;
+            height: 14px;
+            margin: 1px 0;
         }
+
+        /* スイッチ風コンソールエリア（画面中央にゲーム、左右にコントローラーを配置） */
+        .console-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 820px;
+            width: 100%;
+            margin: 2px auto;
+            padding: 0 4px;
+            gap: 6px;
+        }
+        .console-container.reverse {
+            flex-direction: row-reverse;
+        }
+
         /* ゲーム画面（キャンバス）のラッパー */
         .canvas-container {
             position: relative;
-            width: 100%;
-            max-width: 780px;
+            flex-grow: 1;
+            max-width: 580px;
             aspect-ratio: 16 / 9;
-            max-height: 50vh;
-            margin: 2px auto;
-            box-shadow: 0 0 20px rgba(255, 0, 85, 0.3);
-            border-radius: 4px;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.3);
+            border-radius: 6px;
             overflow: hidden;
             border: 2px solid #ff0055;
             background-color: #161823;
@@ -58,11 +72,12 @@
             width: 100%;
             height: 100%;
         }
+
         .dev-panel {
             display: none;
             background: #262938;
             border: 2px solid #ffcc00;
-            padding: 3px;
+            padding: 2px;
             margin: 2px 0;
             border-radius: 6px;
             max-width: 780px;
@@ -72,25 +87,19 @@
             display: block;
         }
         
-        /* 操作パネル全体（コース外の下部に左右配置） */
-        .controller-area {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 780px;
-            width: 100%;
-            margin: 4px auto 0 auto;
-            padding: 0 5px;
-        }
-
         /* 十字キー部分（3x3グリッド） */
         .d-pad {
             display: grid;
-            grid-template-columns: 45px 45px 45px;
-            grid-template-rows: 42px 42px 42px;
-            gap: 3px;
+            grid-template-columns: 42px 42px 42px;
+            grid-template-rows: 39px 39px 39px;
+            gap: 2px;
             justify-content: center;
             align-content: center;
+            flex-shrink: 0;
+            background: rgba(26, 28, 38, 0.6);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid #00ffcc33;
         }
         .d-btn {
             background-color: #262938;
@@ -101,15 +110,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 3px 0 #008866;
-            font-size: 11px;
+            box-shadow: 0 2px 0 #008866;
+            font-size: 10px;
             font-weight: bold;
             transition: transform 0.05s, box-shadow 0.05s;
         }
         .d-btn:active, .d-btn.active {
             background-color: #00ffcc;
             color: #0d0e15;
-            transform: translateY(3px);
+            transform: translateY(2px);
             box-shadow: 0 0 0 #008866;
         }
         
@@ -126,24 +135,29 @@
             height: 0;
             border-style: solid;
         }
-        .arrow-up { border-width: 0 7px 10px 7px; border-color: transparent transparent currentColor transparent; }
-        .arrow-down { border-width: 10px 7px 0 7px; border-color: currentColor transparent transparent transparent; }
-        .arrow-left { border-width: 7px 10px 7px 0; border-color: transparent currentColor transparent transparent; }
-        .arrow-right { border-width: 7px 0 7px 10px; border-color: transparent transparent transparent currentColor; }
+        .arrow-up { border-width: 0 6px 9px 6px; border-color: transparent transparent currentColor transparent; }
+        .arrow-down { border-width: 9px 6px 0 6px; border-color: currentColor transparent transparent transparent; }
+        .arrow-left { border-width: 6px 9px 6px 0; border-color: transparent currentColor transparent transparent; }
+        .arrow-right { border-width: 6px 0 6px 9px; border-color: transparent transparent transparent currentColor; }
 
-        /* コース外右下に配置する5つのアクションボタン群 */
+        /* 右側に配置するアクションボタン群 ＋ 左右反転ボタン */
         .action-pad {
             display: grid;
-            grid-template-columns: repeat(3, minmax(42px, 48px));
-            grid-template-rows: repeat(2, minmax(42px, 48px));
-            gap: 4px;
+            grid-template-columns: repeat(2, minmax(40px, 46px));
+            grid-template-rows: repeat(3, minmax(36px, 42px));
+            gap: 3px;
             justify-content: center;
+            flex-shrink: 0;
+            background: rgba(26, 28, 38, 0.6);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid #ff005533;
         }
         .btn {
             background-color: #262938;
             color: #fff;
             border: 2px solid #ff0055;
-            font-size: clamp(9px, 1.8vw, 11px);
+            font-size: clamp(8px, 1.5vw, 10px);
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
@@ -151,22 +165,24 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 2px;
-            box-shadow: 0 3px 0 #88002d;
+            padding: 1px;
+            box-shadow: 0 2px 0 #88002d;
             transition: transform 0.05s, box-shadow 0.05s;
         }
         .btn:active, .btn.active {
             background-color: #ff0055;
             color: #fff;
-            transform: translateY(3px);
+            transform: translateY(2px);
             box-shadow: 0 0 0 #88002d;
         }
         #btnRec      { grid-column: 1; grid-row: 1; }
         #btnPlay     { grid-column: 2; grid-row: 1; }
-        #btnSpeedDown{ grid-column: 3; grid-row: 1; }
-        #btnSpeedUp  { grid-column: 1; grid-row: 2; }
-        #btnReset    { grid-column: 2; grid-row: 2; border-color: #ff3333; box-shadow: 0 3px 0 #880000; }
+        #btnSpeedDown{ grid-column: 1; grid-row: 2; }
+        #btnSpeedUp  { grid-column: 2; grid-row: 2; }
+        #btnReset    { grid-column: 1; grid-row: 3; border-color: #ff3333; box-shadow: 0 2px 0 #880000; }
         #btnReset:active, #btnReset.active { background-color: #ff3333; box-shadow: 0 0 0 #880000; }
+        #btnSwap     { grid-column: 2; grid-row: 3; border-color: #00ccff; color: #00ccff; box-shadow: 0 2px 0 #005588; font-size: 9px; }
+        #btnSwap:active, #btnSwap.active { background-color: #00ccff; color: #0d0e15; box-shadow: 0 0 0 #005588; }
     </style>
 </head>
 <body>
@@ -174,42 +190,44 @@
     <h1 id="gameTitle">Ghost Action</h1>
     <div class="status" id="statusText">操作: [R] 録画 | [Space] 再生/停止 | [Q/E] 速度変更</div>
     
-    <div class="canvas-container">
-        <canvas id="gameCanvas" width="800" height="450"></canvas>
-    </div>
-
     <div class="dev-panel" id="devPanel">
-        <div style="color: #ffcc00; font-weight: bold; font-size: 11px; margin-bottom: 2px;">🔧 デベロッパーモード有効</div>
+        <div style="color: #ffcc00; font-weight: bold; font-size: 10px; margin-bottom: 2px;">🔧 デベロッパーモード有効</div>
         <div style="display: flex; justify-content: center; gap: 6px;">
-            <button class="btn" onclick="selectStage(0)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 4px 10px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">ステージ 1</button>
-            <button class="btn" onclick="selectStage(1)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 4px 10px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">ステージ 2</button>
-            <button class="btn" onclick="selectStage(2)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 4px 10px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">ステージ 3</button>
+            <button class="btn" onclick="selectStage(0)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 3px 8px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">ステージ 1</button>
+            <button class="btn" onclick="selectStage(1)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 3px 8px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">ステージ 2</button>
+            <button class="btn" onclick="selectStage(2)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 3px 8px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">ステージ 3</button>
         </div>
     </div>
 
-    <!-- コース外に分離・配置されたコントロールパネル -->
-    <div class="controller-area">
-        <!-- 左下の十字キー（斜め含む） -->
-        <div class="d-pad">
+    <!-- スイッチ風のコンソールエリア（中央に画面、左右にコントローラー） -->
+    <div class="console-container" id="consoleContainer">
+        <!-- 左側のコントローラー（初期状態：十字キー） -->
+        <div class="d-pad" id="dPadArea">
             <button class="d-btn" id="btnUpLeft">
-                <div style="display:flex; gap:1px; align-items:center;"><div class="arrow-icon arrow-left" style="transform:scale(0.7);"></div><div class="arrow-icon arrow-up" style="transform:scale(0.7);"></div></div>
+                <div style="display:flex; gap:1px; align-items:center;"><div class="arrow-icon arrow-left" style="transform:scale(0.6);"></div><div class="arrow-icon arrow-up" style="transform:scale(0.6);"></div></div>
             </button>
             <button class="d-btn" id="btnJump"><div class="arrow-icon arrow-up"></div></button>
             <button class="d-btn" id="btnUpRight">
-                <div style="display:flex; gap:1px; align-items:center;"><div class="arrow-icon arrow-up" style="transform:scale(0.7);"></div><div class="arrow-icon arrow-right" style="transform:scale(0.7);"></div></div>
+                <div style="display:flex; gap:1px; align-items:center;"><div class="arrow-icon arrow-up" style="transform:scale(0.6);"></div><div class="arrow-icon arrow-right" style="transform:scale(0.6);"></div></div>
             </button>
             <button class="d-btn" id="btnLeft"><div class="arrow-icon arrow-left"></div></button>
             <button class="d-btn" id="btnRight"><div class="arrow-icon arrow-right"></div></button>
             <button class="d-btn" id="btnDown"><div class="arrow-icon arrow-down"></div></button>
         </div>
 
-        <!-- コース外右下の5つのアクションボタン -->
-        <div class="action-pad">
+        <!-- 中央のゲーム画面 -->
+        <div class="canvas-container">
+            <canvas id="gameCanvas" width="800" height="450"></canvas>
+        </div>
+
+        <!-- 右側のコントローラー（初期状態：アクションボタン群 ＋ 左右入替ボタン） -->
+        <div class="action-pad" id="actionPadArea">
             <button class="btn" id="btnRec">🔴<br>録画</button>
             <button class="btn" id="btnPlay">▶<br>再生</button>
             <button class="btn" id="btnSpeedDown">Q<br>減速</button>
             <button class="btn" id="btnSpeedUp">E<br>加速</button>
             <button class="btn" id="btnReset">C<br>リセット</button>
+            <button class="btn" id="btnSwap">⇄<br>入替</button>
         </div>
     </div>
 
@@ -219,6 +237,7 @@ const ctx = canvas.getContext('2d');
 const statusText = document.getElementById('statusText');
 const devPanel = document.getElementById('devPanel');
 const gameTitle = document.getElementById('gameTitle');
+const consoleContainer = document.getElementById('consoleContainer');
 
 const gravity = 0.45;
 const keys = {};
@@ -246,6 +265,13 @@ const barrier = {
 let startTime = Date.now();
 let elapsedTime = 0;
 let currentStageIndex = 0;
+
+// 左右配置反転機能
+function toggleLayoutSwap() {
+    consoleContainer.classList.toggle('reverse');
+    const isReversed = consoleContainer.classList.contains('reverse');
+    updateStatus(isReversed ? '操作配置: 右手十字キー / 左手アクション' : '操作配置: 左手十字キー / 右手アクション');
+}
 
 gameTitle.addEventListener('click', () => {
     if (_x1) return;
@@ -354,6 +380,7 @@ bindTouchButton('btnPlay', null, togglePlayback);
 bindTouchButton('btnSpeedDown', null, () => changeSpeed(-0.1));
 bindTouchButton('btnSpeedUp', null, () => changeSpeed(0.1));
 bindTouchButton('btnReset', null, resetAllGhosts);
+bindTouchButton('btnSwap', null, toggleLayoutSwap);
 
 const player = {
     x: 40, y: 350, w: 22, h: 26, vx: 0, vy: 0, prevY: 350, isGrounded: false, color: '#00ffcc'
@@ -403,7 +430,7 @@ const stages = [
         goal: { x: 720, y: 330, w: 35, h: 60 },
         map: [
             { x: 0, y: 400, w: 180, h: 50 },
-            { x: 260, y: 280, w: 80, h: 20 }, // 2つあるうちの左側の空中床
+            { x: 260, y: 280, w: 80, h: 20 },
             { x: 480, y: 200, w: 80, h: 20 },
             { x: 650, y: 400, w: 150, h: 50 },
             { x: 0, y: 0, w: 15, h: 450 },
@@ -412,18 +439,15 @@ const stages = [
         spikes: [{ x: 180, y: 430, w: 470, h: 20 }],
         movingSpikes: [],
         windZones: [],
-        // 左側の空中床のだいぶ上のほうに設置されたスイッチ
         switches: [{ x: 285, y: 100, w: 30, h: 10, pressed: false, targetDoorId: 0 }],
-        // ゴールを完全に囲むドア（左右・下、および天井もふさぐ上ドア）
         doors: [
-            { id: 0, x: 700, y: 270, w: 20, h: 130, open: false }, // 左壁
-            { id: 0, x: 760, y: 270, w: 20, h: 130, open: false }, // 右壁
-            { id: 0, x: 700, y: 255, w: 80, h: 15, open: false }   // 天井
+            { id: 0, x: 700, y: 270, w: 20, h: 130, open: false },
+            { id: 0, x: 760, y: 270, w: 20, h: 130, open: false },
+            { id: 0, x: 700, y: 255, w: 80, h: 15, open: false }
         ],
-        // 砲台：左側の空中床の上にある通常砲台（左方向発射）に加え、上方向へ発射する縦方向の砲台を追加
         shooterEnemies: [
             { x: 420, y: 110, w: 30, h: 40, dir: 'left' },
-            { x: 570, y: 380, w: 40, h: 20, dir: 'up' } // 縦方向に上へ発射する砲台
+            { x: 570, y: 380, w: 40, h: 20, dir: 'up' }
         ],
         movingEnemies: []
     }
@@ -600,7 +624,6 @@ function update() {
         }
     }
 
-    // スイッチ判定（プレイヤーまたは足場化されたゴーストがスイッチに触れたら開く）
     for (let sw of stg.switches) {
         let isActivated = isColliding(player, sw);
         if (!isActivated) {
