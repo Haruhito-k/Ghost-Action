@@ -63,14 +63,14 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 840px;
-            height: 460px;
+            width: 960px;
+            height: 480px;
             transform-origin: center center;
             flex-shrink: 0;
         }
 
         h1 {
-            font-size: 14px;
+            font-size: 13px;
             margin: 1px 0;
             cursor: pointer;
         }
@@ -87,7 +87,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 820px;
+            width: 940px;
             margin: 2px auto;
             padding: 0 4px;
             gap: 6px;
@@ -100,7 +100,7 @@
         .canvas-container {
             position: relative;
             flex-grow: 1;
-            width: 580px;
+            width: 660px; /* PC時のデフォルト幅を拡大 */
             aspect-ratio: 16 / 9;
             box-shadow: 0 0 15px rgba(255, 0, 85, 0.3);
             border-radius: 6px;
@@ -121,7 +121,7 @@
             padding: 2px;
             margin: 2px 0;
             border-radius: 6px;
-            width: 780px;
+            width: 880px;
         }
         .dev-panel.active {
             display: block;
@@ -227,12 +227,13 @@
         /* スマホ専用の特大サイズボタンレイアウト（画面幅900px以下） */
         @media screen and (max-width: 900px) {
             .console-container {
-                width: 840px;
-                gap: 2px;
+                width: 940px;
+                gap: 4px;
                 padding: 0;
             }
+            /* ボタンの大きさは変えず、ステージ枠を限界まで大きく拡大 */
             .canvas-container {
-                width: 440px; /* ゲーム画面を少しコンパクトにして、ボタンの幅を十分に確保 */
+                width: 580px; 
             }
             .d-pad {
                 grid-template-columns: 66px 66px 66px;
@@ -327,8 +328,8 @@
 function autoResize() {
     const wrapper = document.getElementById('gameWrapper');
     const warning = document.getElementById('rotateWarning');
-    const baseWidth = 840;
-    const baseHeight = 460;
+    const baseWidth = 960;
+    const baseHeight = 480;
 
     // モバイル端末判定
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.innerWidth <= 1024);
