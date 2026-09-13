@@ -220,7 +220,7 @@ const statusText = document.getElementById('statusText');
 const devPanel = document.getElementById('devPanel');
 const gameTitle = document.getElementById('gameTitle');
 
-const gravity = 0.45;
+const gravity = 0.65; // 重力を強めて浮遊感を軽減
 const keys = {};
 
 let isRecording = false;
@@ -392,7 +392,7 @@ const stages = [
         ],
         spikes: [{ x: 150, y: 430, w: 450, h: 20 }],
         movingSpikes: [{ x: 350, y: 200, w: 40, h: 20, vy: 1.5, minY: 150, maxY: 380 }],
-        windZones: [{ x: 180, y: 100, w: 120, h: 300, forceX: 0, forceY: -0.5 }],
+        windZones: [{ x: 180, y: 100, w: 120, h: 300, forceX: 0, forceY: -0.3 }],
         switches: [],
         doors: [],
         shooterEnemies: [{ x: 730, y: 180, w: 30, h: 40 }],
@@ -525,7 +525,7 @@ function update() {
     else player.vx = 0;
 
     if ((keys['ArrowUp'] || keys['KeyW'] || keys['KeyK']) && player.isGrounded) {
-        player.vy = -9.5;
+        player.vy = -11.0; // ジャンプ初速をシャキッと調整
         player.isGrounded = false;
     }
 
@@ -558,7 +558,7 @@ function update() {
             if (g.state === 'STOPPED' && isColliding(player, g)) {
                 const wasAbove = player.prevY + player.h <= g.y + 6;
                 if (!wasAbove) {
-                    const bounceSpeed = 5.0;
+                    const bounceSpeed = 4.0;
                     let angleDeg = (player.vx > 0) ? (210 + Math.random() * 120) : (30 + Math.random() * 120);
                     const rad = angleDeg * Math.PI / 180;
                     player.vx = Math.sin(rad) * bounceSpeed;
