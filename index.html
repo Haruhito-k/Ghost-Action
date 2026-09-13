@@ -28,7 +28,7 @@
             touch-action: none;
         }
 
-        /* 横画面推奨のオーバーレイ表示（常に最前面） */
+        /* 横画面推奨のオーバーレイ表示 */
         #rotateWarning {
             position: fixed;
             top: 0;
@@ -100,7 +100,7 @@
         .canvas-container {
             position: relative;
             flex-grow: 1;
-            width: 660px; /* PC時のデフォルト幅を拡大 */
+            width: 660px;
             aspect-ratio: 16 / 9;
             box-shadow: 0 0 15px rgba(255, 0, 85, 0.3);
             border-radius: 6px;
@@ -224,16 +224,16 @@
         #btnSwap     { grid-column: 2; grid-row: 3; border-color: #00ccff; color: #00ccff; box-shadow: 0 2px 0 #005588; font-size: 8px; }
         #btnSwap:active, #btnSwap.active { background-color: #00ccff; color: #0d0e15; box-shadow: 0 0 0 #005588; }
 
-        /* スマホ専用の特大サイズボタンレイアウト（画面幅900px以下） */
+        /* スマホ専用レイアウト：ボタンサイズは変えず、ステージ枠をさらに限界まで拡大 */
         @media screen and (max-width: 900px) {
             .console-container {
                 width: 940px;
-                gap: 4px;
+                gap: 2px;
                 padding: 0;
             }
-            /* ボタンの大きさは変えず、ステージ枠を限界まで大きく拡大 */
+            /* ステージ枠をさらに大きく限界まで広げる */
             .canvas-container {
-                width: 580px; 
+                width: 660px; 
             }
             .d-pad {
                 grid-template-columns: 66px 66px 66px;
@@ -270,7 +270,7 @@
 </head>
 <body>
 
-    <!-- 縦持ち時の横画面推奨警告 -->
+    <!-- 縦画面時の横画面推奨警告 -->
     <div id="rotateWarning">
         <span>📱🔄</span>
         <div>横画面推奨</div>
@@ -324,14 +324,12 @@
     </div>
 
 <script>
-// 全体のサイズ感は変えず、画面全体を自動スケーリングする処理
 function autoResize() {
     const wrapper = document.getElementById('gameWrapper');
     const warning = document.getElementById('rotateWarning');
     const baseWidth = 960;
     const baseHeight = 480;
 
-    // モバイル端末判定
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.innerWidth <= 1024);
     const isPortrait = window.innerHeight > window.innerWidth;
 
@@ -393,7 +391,7 @@ let currentStageIndex = 0;
 function toggleLayoutSwap() {
     consoleContainer.classList.toggle('reverse');
     const isReversed = consoleContainer.classList.contains('reverse');
-    updateStatus(isReversed ? '操作配置: 右手十字キー / 左手アクション' : '操作配置: 左手十字キー / 右利きアクション');
+    updateStatus(isReversed ? '操作配置: 右手十字キー / 左手アクション' : '操作配置: 左手十字キー / 右手アクション');
 }
 
 gameTitle.addEventListener('click', () => {
