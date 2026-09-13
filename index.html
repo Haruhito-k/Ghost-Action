@@ -57,7 +57,7 @@
             to { transform: rotate(90deg) scale(1.2); }
         }
 
-        /* 画面全体を自動で拡大縮小するためのスケーリングラッパー */
+        /* 画面いっぱいに比率を保ったまま拡大するラッパー */
         #gameWrapper {
             display: flex;
             flex-direction: column;
@@ -281,7 +281,7 @@
     </div>
 
 <script>
-// 画面サイズに合わせた自動スケーリング処理 ＆ 横画面チェック（画面めいっぱい拡大）
+// 画面の縦横幅いっぱいに限界まで拡大するスケーリング処理
 function autoResize() {
     const wrapper = document.getElementById('gameWrapper');
     const warning = document.getElementById('rotateWarning');
@@ -298,9 +298,12 @@ function autoResize() {
         warning.style.display = 'none';
     }
 
-    // 余白を無くして画面いっぱいに拡大
-    const scaleX = window.innerWidth / baseWidth;
-    const scaleY = window.innerHeight / baseHeight;
+    // 実際のブラウザ画面サイズを取得し、隙間なく画面いっぱいに収まるスケールを計算
+    const clientWidth = document.documentElement.clientWidth;
+    const clientHeight = document.documentElement.clientHeight;
+
+    const scaleX = clientWidth / baseWidth;
+    const scaleY = clientHeight / baseHeight;
     const scale = Math.min(scaleX, scaleY);
 
     wrapper.style.transform = `scale(${scale})`;
