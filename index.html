@@ -408,21 +408,21 @@ const stages = [
             { x: 650, y: 400, w: 150, h: 50 },
             { x: 0, y: 0, w: 15, h: 450 },
             { x: 785, y: 0, w: 15, h: 450 },
-            // 赤い砲台の上に設置した床（足場）
-            { x: 305, y: 224, w: 50, h: 10 }
+            // 赤い砲台(y: 230付近)の真上に設置した床（足場）
+            { x: 710, y: 215, w: 55, h: 10 }
         ],
         spikes: [{ x: 180, y: 430, w: 470, h: 20 }],
         movingSpikes: [],
         windZones: [],
         // 床のすぐ上にスイッチを設置
-        switches: [{ x: 315, y: 214, w: 30, h: 10, pressed: false, targetDoorId: 0 }],
+        switches: [{ x: 722, y: 205, w: 30, h: 10, pressed: false, targetDoorId: 0 }],
         // ゴールの周りを完全に囲むドア（左右・上）
         doors: [
             { id: 0, x: 670, y: 160, w: 20, h: 140, open: false }, // 左壁
             { id: 0, x: 760, y: 160, w: 20, h: 140, open: false }, // 右壁
             { id: 0, x: 670, y: 145, w: 110, h: 20, open: false }  // 上天井
         ],
-        shooterEnemies: [{ x: 315, y: 234, w: 30, h: 40 }], // 赤い砲台
+        shooterEnemies: [{ x: 720, y: 230, w: 30, h: 40 }], // 赤い砲台（もともとの位置）
         movingEnemies: []
     }
 ];
@@ -598,7 +598,7 @@ function update() {
         }
     }
 
-    // スイッチ判定（プレイヤーまたは足場化されたゴースト、あるいは「ブロック」としてのゴーストがスイッチに触れたら開く）
+    // スイッチ判定（プレイヤーまたは足場化されたゴーストがスイッチに触れたら開く）
     for (let sw of stg.switches) {
         let isActivated = isColliding(player, sw);
         if (!isActivated) {
