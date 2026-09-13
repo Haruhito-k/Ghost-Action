@@ -11,42 +11,54 @@
             color: #fff;
             font-family: sans-serif;
             margin: 0;
-            padding: 5px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            box-sizing: border-box;
             touch-action: none;
+            overflow-x: hidden;
         }
         h1 {
-            font-size: 20px;
+            font-size: 22px;
             margin: 5px 0;
         }
         canvas {
             background-color: #161823;
             border: 2px solid #ff0055;
             display: block;
-            margin: 5px auto;
-            max-width: 100%;
+            width: 100%;
+            max-width: 1100px;
             height: auto;
+            aspect-ratio: 16 / 9;
+            box-shadow: 0 0 25px rgba(255, 0, 85, 0.3);
+            border-radius: 4px;
         }
         .status {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: bold;
             color: #ff0055;
             height: 24px;
+            margin: 5px 0;
         }
         .controls {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 20px;
-            max-width: 800px;
+            gap: 25px;
+            max-width: 1100px;
+            width: 100%;
             margin: 10px auto;
             padding: 0 10px;
             flex-wrap: wrap;
         }
         .d-pad {
             display: grid;
-            grid-template-columns: 55px 55px 55px;
-            grid-template-rows: 45px 45px 45px;
-            gap: 4px;
+            grid-template-columns: 60px 60px 60px;
+            grid-template-rows: 50px 50px 50px;
+            gap: 5px;
             justify-content: center;
             align-content: center;
         }
@@ -54,9 +66,9 @@
             background-color: #262938;
             color: #fff;
             border: 2px solid #00ffcc;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             user-select: none;
             -webkit-user-select: none;
@@ -77,20 +89,20 @@
         .action-panel {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
         .button-row {
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
         }
         .btn {
             background-color: #262938;
             color: #fff;
             border: 2px solid #ff0055;
-            padding: 10px 14px;
-            font-size: 13px;
+            padding: 12px 18px;
+            font-size: 14px;
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
@@ -248,7 +260,7 @@ const stages = [
         ],
         spikes: [{ x: 150, y: 430, w: 450, h: 20 }],
         movingSpikes: [{ x: 350, y: 200, w: 40, h: 20, vy: 1.5, minY: 150, maxY: 380 }],
-        windZones: [{ x: 180, y: 100, w: 120, h: 300, forceX: 0, forceY: -0.25 }],
+        windZones: [{ x: 180, y: 100, w: 120, h: 300, forceX: 0, forceY: -0.7 }],
         switches: [],
         doors: [],
         shooterEnemies: [{ x: 730, y: 180, w: 30, h: 40 }],
@@ -587,7 +599,6 @@ function update() {
 
     for (let g of ghosts) {
         if (g.state === 'REPLAYING') {
-            // 常に現在のグローバル速度を参照するように修正
             g.progress += ghostSpeedRatio;
             const index = Math.floor(g.progress);
             if (index < g.frames.length) {
