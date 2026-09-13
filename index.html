@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ghost Action - MULTI STAGE (Landscape Recommended)</title>
+    <title>Ghost Action - MULTI STAGE</title>
     <style>
         * {
             box-sizing: border-box;
@@ -52,6 +52,82 @@
         @keyframes bounce {
             from { transform: rotate(0deg) scale(1); }
             to { transform: rotate(90deg) scale(1.2); }
+        }
+
+        /* ホーム画面（スタート画面） */
+        #startScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100dvh;
+            background-color: #0d0e15;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 99997;
+            padding: 20px;
+        }
+        .start-box {
+            background: #161823;
+            border: 3px solid #00ffcc;
+            border-radius: 16px;
+            width: 560px;
+            max-width: 95vw;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.4);
+        }
+        .start-box h1 {
+            color: #00ffcc;
+            font-size: 28px;
+            margin: 0 0 10px 0;
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+        }
+        .start-box p {
+            color: #ccc;
+            font-size: 12px;
+            line-height: 1.6;
+            margin: 8px 0;
+        }
+        .start-rules {
+            background: #0d0e15;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 16px 0;
+            text-align: left;
+        }
+        .start-rules h3 {
+            color: #ff0055;
+            font-size: 12px;
+            margin: 0 0 6px 0;
+        }
+        .start-rules ul {
+            margin: 0;
+            padding-left: 16px;
+            font-size: 11px;
+            color: #aaa;
+            line-height: 1.5;
+        }
+        .start-btn {
+            background-color: #00ffcc;
+            color: #0d0e15;
+            border: none;
+            padding: 14px 40px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #008866;
+            transition: transform 0.05s, box-shadow 0.05s;
+            margin-top: 10px;
+        }
+        .start-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #008866;
+            background-color: #00ccaa;
         }
 
         /* 画面全体の絶対中央に配置する基準ラッパー */
@@ -398,6 +474,25 @@
         <div style="font-size: 14px; color: #00ffcc; font-weight: normal;">端末を横向きにしてプレイしてください</div>
     </div>
 
+    <!-- ホーム画面（スタート画面） -->
+    <div id="startScreen">
+        <div class="start-box">
+            <h1>👻 Ghost Action</h1>
+            <p>自分の動きを録画して「ゴースト」を作り、足場にしてゴールを目指すアクションパズルゲーム！</p>
+            
+            <div class="start-rules">
+                <h3>🎮 かんたんルール</h3>
+                <ul>
+                    <li><b>① [ 🔴 録画 ]</b> を押して動く</li>
+                    <li><b>② もう一度 [ 🔴 録画 ]</b> を押してストップ（ゴースト誕生）</li>
+                    <li><b>③ [ ▶ 再生 ]</b> でゴーストを動かし、<b>もう一度 [ ▶ 再生 ]</b> で足場に変形！</li>
+                </ul>
+            </div>
+
+            <button class="start-btn" onclick="startGame()">ゲームスタート！</button>
+        </div>
+    </div>
+
     <!-- 遊び方説明ポップアップモーダル -->
     <div id="helpModal">
         <div class="help-content">
@@ -436,12 +531,11 @@
         <h1 id="gameTitle">Ghost Action</h1>
         <div class="status" id="statusText">操作: [R] 録画 | [Space] 再生/停止 | [Q/E] 速度変更</div>
         
-        <!-- 上部バー（カラー選択 ＋ 遊び方ボタン） -->
+        <!-- 上部バー（カラー選択 ＋ 遊び方ボタン）※赤色チップ削除済み -->
         <div class="top-bar-area">
             <div class="color-picker-bar">
                 <span>キャラカラー:</span>
                 <div class="color-chip active" style="background-color: #00ffcc;" onclick="changePlayerColor('#00ffcc', this)"></div>
-                <div class="color-chip" style="background-color: #ff3333;" onclick="changePlayerColor('#ff3333', this)"></div>
                 <div class="color-chip" style="background-color: #ff0055;" onclick="changePlayerColor('#ff0055', this)"></div>
                 <div class="color-chip" style="background-color: #ffcc00;" onclick="changePlayerColor('#ffcc00', this)"></div>
                 <div class="color-chip" style="background-color: #00ccff;" onclick="changePlayerColor('#00ccff', this)"></div>
@@ -596,6 +690,15 @@ window.addEventListener('orientationchange', autoResize);
 window.addEventListener('DOMContentLoaded', autoResize);
 autoResize();
 
+let gameStarted = false;
+function startGame() {
+    initAudio();
+    gameStarted = true;
+    document.getElementById('startScreen').style.display = 'none';
+    startTime = Date.now();
+    resetAllGhosts();
+}
+
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const statusText = document.getElementById('statusText');
@@ -701,8 +804,7 @@ function _z_reset() {
 }
 
 window.addEventListener('keydown', e => {
-    // モーダル表示中はキー操作を無効化
-    if (helpModal.style.display === 'flex') return;
+    if (!gameStarted || helpModal.style.display === 'flex') return;
     initAudio();
     if (e.code === 'KeyR' && !e.repeat) toggleRecording();
     if (e.code === 'Space' && !e.repeat) { togglePlayback(); e.preventDefault(); }
@@ -731,7 +833,7 @@ function bindTouchButton(id, codeNames, actionFunc) {
 
     const pressOn = (e) => {
         e.preventDefault();
-        if (helpModal.style.display === 'flex') return;
+        if (!gameStarted || helpModal.style.display === 'flex') return;
         initAudio();
         if (actionFunc) actionFunc();
         if (codeNames) {
@@ -935,7 +1037,7 @@ function createBulletDestroyEffect(x, y) {
 }
 
 function update() {
-    if (helpModal.style.display === 'flex') return;
+    if (!gameStarted || helpModal.style.display === 'flex') return;
 
     elapsedTime = Date.now() - startTime;
     const stg = getCurrentStage();
