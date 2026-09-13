@@ -82,6 +82,33 @@
             margin: 2px 0;
         }
 
+        /* カラー選択バー */
+        .color-picker-bar {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            justify-content: center;
+            margin: 2px 0;
+            font-size: 9px;
+            color: #aaa;
+        }
+        .color-chip {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid #555;
+            cursor: pointer;
+            transition: transform 0.1s, border-color 0.1s;
+        }
+        .color-chip:hover {
+            transform: scale(1.2);
+        }
+        .color-chip.active {
+            border-color: #fff;
+            transform: scale(1.25);
+            box-shadow: 0 0 6px #fff;
+        }
+
         /* スイッチ風コンソールエリア */
         .console-container {
             display: flex;
@@ -282,6 +309,17 @@
         <h1 id="gameTitle">Ghost Action</h1>
         <div class="status" id="statusText">操作: [R] 録画 | [Space] 再生/停止 | [Q/E] 速度変更</div>
         
+        <!-- プレイヤーカラー選択バー -->
+        <div class="color-picker-bar">
+            <span>キャラカラー:</span>
+            <div class="color-chip active" style="background-color: #00ffcc;" onclick="changePlayerColor('#00ffcc', this)"></div>
+            <div class="color-chip" style="background-color: #ff0055;" onclick="changePlayerColor('#ff0055', this)"></div>
+            <div class="color-chip" style="background-color: #ffcc00;" onclick="changePlayerColor('#ffcc00', this)"></div>
+            <div class="color-chip" style="background-color: #00ccff;" onclick="changePlayerColor('#00ccff', this)"></div>
+            <div class="color-chip" style="background-color: #ff66ff;" onclick="changePlayerColor('#ff66ff', this)"></div>
+            <div class="color-chip" style="background-color: #ffffff;" onclick="changePlayerColor('#ffffff', this)"></div>
+        </div>
+
         <div class="dev-panel" id="devPanel">
             <div style="color: #ffcc00; font-weight: bold; font-size: 10px; margin-bottom: 2px;">🔧 デベロッパーモード有効</div>
             <div style="display: flex; justify-content: center; gap: 6px;">
@@ -394,16 +432,14 @@ function playSound(type) {
                 osc.stop(now + i * 0.1 + 0.15);
             });
         }
-    } catch(e) {
-        // 音声ブロック対策
-    }
+    } catch(e) {}
 }
 
 function autoResize() {
     const wrapper = document.getElementById('gameWrapper');
     const warning = document.getElementById('rotateWarning');
     const baseWidth = 1120;
-    const baseHeight = 500;
+    const baseHeight = 520;
 
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.innerWidth <= 1024);
     const isPortrait = window.innerHeight > window.innerWidth;
@@ -462,6 +498,18 @@ const barrier = {
 let startTime = Date.now();
 let elapsedTime = 0;
 let currentStageIndex = 0;
+
+const player = {
+    x: 40, y: 350, w: 22, h: 26, vx: 0, vy: 0, prevY: 350, isGrounded: false, color: '#00ffcc'
+};
+
+function changePlayerColor(colorHex, element) {
+    initAudio();
+    player.color = colorHex;
+    document.querySelectorAll('.color-chip').forEach(chip => chip.classList.remove('active'));
+    element.classList.add('active');
+    updateStatus(`プレイヤーカラーを変更しました`);
+}
 
 function toggleLayoutSwap() {
     initAudio();
@@ -581,10 +629,6 @@ bindTouchButton('btnSpeedDown', null, () => changeSpeed(-0.1));
 bindTouchButton('btnSpeedUp', null, () => changeSpeed(0.1));
 bindTouchButton('btnReset', null, resetAllGhosts);
 bindTouchButton('btnSwap', null, toggleLayoutSwap);
-
-const player = {
-    x: 40, y: 350, w: 22, h: 26, vx: 0, vy: 0, prevY: 350, isGrounded: false, color: '#00ffcc'
-};
 
 const stages = [
     {
