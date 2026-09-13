@@ -376,7 +376,7 @@ const stages = [
         windZones: [],
         switches: [],
         doors: [],
-        shooterEnemies: [{ x: 720, y: 210, w: 30, h: 40 }],
+        shooterEnemies: [{ x: 720, y: 210, w: 30, h: 40, dir: 'left' }],
         movingEnemies: [{ x: 520, y: 224, w: 26, h: 26, vx: -0.8, minX: 510, maxX: 640 }]
     },
     {
@@ -395,7 +395,7 @@ const stages = [
         windZones: [{ x: 180, y: 100, w: 120, h: 300, forceX: 0, forceY: -0.468 }],
         switches: [],
         doors: [],
-        shooterEnemies: [{ x: 730, y: 180, w: 30, h: 40 }],
+        shooterEnemies: [{ x: 730, y: 180, w: 30, h: 40, dir: 'left' }],
         movingEnemies: []
     },
     {
@@ -412,14 +412,19 @@ const stages = [
         spikes: [{ x: 180, y: 430, w: 470, h: 20 }],
         movingSpikes: [],
         windZones: [],
-        // 左側の空中床(x: 260, y: 280)のだいぶ上のほうに設置されたスイッチ
+        // 左側の空中床のだいぶ上のほうに設置されたスイッチ
         switches: [{ x: 285, y: 100, w: 30, h: 10, pressed: false, targetDoorId: 0 }],
-        // ゴールを塞ぐドア（スイッチを押すと開く）
+        // ゴールを完全に囲むドア（左右・下、および天井もふさぐ上ドア）
         doors: [
-            { id: 0, x: 700, y: 310, w: 20, h: 90, open: false }
+            { id: 0, x: 700, y: 270, w: 20, h: 130, open: false }, // 左壁
+            { id: 0, x: 760, y: 270, w: 20, h: 130, open: false }, // 右壁
+            { id: 0, x: 700, y: 255, w: 80, h: 15, open: false }   // 天井
         ],
-        // もともとの位置（左側の空中床のだいぶ上のほう）にある赤い砲台
-        shooterEnemies: [{ x: 420, y: 110, w: 30, h: 40 }],
+        // 砲台：左側の空中床の上にある通常砲台（左方向発射）に加え、上方向へ発射する縦方向の砲台を追加
+        shooterEnemies: [
+            { x: 420, y: 110, w: 30, h: 40, dir: 'left' },
+            { x: 570, y: 380, w: 40, h: 20, dir: 'up' } // 縦方向に上へ発射する砲台
+        ],
         movingEnemies: []
     }
 ];
@@ -646,7 +651,13 @@ function update() {
     bulletTimer++;
     if (bulletTimer % 120 === 0) {
         for (let se of stg.shooterEnemies) {
-            bullets.push({ x: se.x, y: se.y + 10, r: 6, vx: -3.5, vy: 0, life: 0 });
+            if (se.dir === 'up') {
+                bullets.push({ x: se.x + se.w / 2, y: se.y, r: 6, vx: 0, vy: -3.5, life: 0 });
+            } else if (se.dir === 'down') {
+                bullets.push({ x: se.x + se.w / 2, y: se.y + se.h, r: 6, vx: 0, vy: 3.5, life: 0 });
+            } else {
+                bullets.push({ x: se.x, y: se.y + 10, r: 6, vx: -3.5, vy: 0, life: 0 });
+            }
         }
     }
 
