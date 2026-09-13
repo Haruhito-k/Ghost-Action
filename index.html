@@ -57,7 +57,7 @@
             to { transform: rotate(90deg) scale(1.2); }
         }
 
-        /* 画面いっぱいに比率を保ったまま拡大するラッパー */
+        /* ゲーム画面全体を包むラッパー */
         #gameWrapper {
             display: flex;
             flex-direction: column;
@@ -281,7 +281,7 @@
     </div>
 
 <script>
-// 画面の縦横幅いっぱいに限界まで拡大するスケーリング処理
+// スマホのときだけさらに大きく拡大するスケーリング処理
 function autoResize() {
     const wrapper = document.getElementById('gameWrapper');
     const warning = document.getElementById('rotateWarning');
@@ -298,13 +298,18 @@ function autoResize() {
         warning.style.display = 'none';
     }
 
-    // 実際のブラウザ画面サイズを取得し、隙間なく画面いっぱいに収まるスケールを計算
     const clientWidth = document.documentElement.clientWidth;
     const clientHeight = document.documentElement.clientHeight;
 
     const scaleX = clientWidth / baseWidth;
     const scaleY = clientHeight / baseHeight;
-    const scale = Math.min(scaleX, scaleY);
+    let scale = Math.min(scaleX, scaleY);
+
+    // スマホ（横幅が狭い端末など）と判断された場合は、さらに1.35倍大きく拡大
+    const isMobileSize = clientWidth <= 900;
+    if (isMobileSize) {
+        scale *= 1.35;
+    }
 
     wrapper.style.transform = `scale(${scale})`;
 }
