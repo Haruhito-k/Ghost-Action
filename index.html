@@ -392,7 +392,7 @@ const stages = [
         ],
         spikes: [{ x: 150, y: 430, w: 450, h: 20 }],
         movingSpikes: [{ x: 350, y: 200, w: 40, h: 20, vy: 1.5, minY: 150, maxY: 380 }],
-        windZones: [{ x: 180, y: 100, w: 120, h: 300, forceX: 0, forceY: -0.468 }], // ゾーンの上端まで約5秒で到達する超微風に調整
+        windZones: [{ x: 180, y: 100, w: 120, h: 300, forceX: 0, forceY: -0.468 }],
         switches: [],
         doors: [],
         shooterEnemies: [{ x: 730, y: 180, w: 30, h: 40 }],
@@ -400,21 +400,27 @@ const stages = [
     },
     {
         start: { x: 40, y: 350 },
-        goal: { x: 730, y: 330, w: 35, h: 60 },
+        goal: { x: 720, y: 220, w: 35, h: 60 },
         map: [
             { x: 0, y: 400, w: 180, h: 50 },
             { x: 260, y: 280, w: 80, h: 20 },
             { x: 480, y: 200, w: 80, h: 20 },
-            { x: 680, y: 400, w: 120, h: 50 },
+            { x: 650, y: 400, w: 150, h: 50 },
             { x: 0, y: 0, w: 15, h: 450 },
             { x: 785, y: 0, w: 15, h: 450 }
         ],
-        spikes: [{ x: 180, y: 430, w: 500, h: 20 }],
+        spikes: [{ x: 180, y: 430, w: 470, h: 20 }],
         movingSpikes: [],
         windZones: [],
-        switches: [{ x: 500, y: 190, w: 40, h: 10, pressed: false, targetDoorId: 0 }],
-        doors: [{ id: 0, x: 680, y: 280, w: 20, h: 120, open: false }],
-        shooterEnemies: [{ x: 300, y: 100, w: 30, h: 40 }],
+        // 赤い砲台の上に床を設置し、その上のスイッチ
+        switches: [{ x: 310, y: 224, w: 40, h: 10, pressed: false, targetDoorId: 0 }],
+        // ドアで扉の周りを完全に囲む
+        doors: [
+            { id: 0, x: 670, y: 160, w: 20, h: 180, open: false }, // 左壁
+            { id: 0, x: 755, y: 160, w: 20, h: 180, open: false }, // 右壁
+            { id: 0, x: 670, y: 140, w: 105, h: 20, open: false }  // 上天井
+        ],
+        shooterEnemies: [{ x: 315, y: 234, w: 30, h: 40 }], // 赤い砲台
         movingEnemies: []
     }
 ];
@@ -593,8 +599,9 @@ function update() {
     for (let sw of stg.switches) {
         if (isColliding(player, sw) || ghosts.some(g => g.state === 'STOPPED' && isColliding(g, sw))) {
             sw.pressed = true;
-            const door = stg.doors.find(d => d.id === sw.targetDoorId);
-            if (door) door.open = true;
+            stg.doors.forEach(d => {
+                if (d.id === sw.targetDoorId) d.open = true;
+            });
         }
     }
 
