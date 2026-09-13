@@ -43,6 +43,20 @@
             height: 24px;
             margin: 5px 0;
         }
+        .dev-panel {
+            display: none;
+            background: #262938;
+            border: 2px solid #ffcc00;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            max-width: 1100px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .dev-panel.active {
+            display: block;
+        }
         .controls {
             display: flex;
             justify-content: center;
@@ -122,6 +136,15 @@
     <div class="status" id="statusText">操作: [R] 録画 | [Space] 再生/停止 | [Q/E] 速度変更</div>
     <canvas id="gameCanvas" width="800" height="450"></canvas>
 
+    <div class="dev-panel" id="devPanel">
+        <div style="color: #ffcc00; font-weight: bold; margin-bottom: 5px;">🔧 デベロッパーモード有効</div>
+        <div class="button-row">
+            <button class="btn" onclick="selectStage(0)" style="border-color:#ffcc00;">ステージ 1</button>
+            <button class="btn" onclick="selectStage(1)" style="border-color:#ffcc00;">ステージ 2</button>
+            <button class="btn" onclick="selectStage(2)" style="border-color:#ffcc00;">ステージ 3</button>
+        </div>
+    </div>
+
     <div class="controls">
         <div class="d-pad">
             <button class="d-btn" id="btnJump">⬆</button>
@@ -147,6 +170,7 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const statusText = document.getElementById('statusText');
+const devPanel = document.getElementById('devPanel');
 
 const gravity = 0.45;
 const keys = {};
@@ -160,6 +184,12 @@ let particles = [];
 
 let ghostSpeedRatio = 0.5;
 
+// デベロッパーモード用変数
+let devModeUnlocked = false;
+let cPressCount = 0;
+let spacePressCount = 0;
+let devStep = 0; // 0: Cを待つ, 1: スペースを待つ
+
 const barrier = {
     x: 100, y: 280, w: 15, h: 120,
     color: 'rgba(0, 229, 255, 0.6)',
@@ -172,9 +202,41 @@ let currentStageIndex = 0;
 
 // --- キーボード入力イベント ---
 window.addEventListener('keydown', e => {
-    if (e.code === 'KeyR' && !e.repeat) toggleRecording();
-    if (e.code === 'Space' && !e.repeat) { togglePlayback(); e.preventDefault(); }
-    if (e.code === 'KeyC' && !e.repeat) resetAllGhosts();
+    // デベロッパーモードの隠しコマンド判定 (C 5回 -> スペース 5回)
+    if (!devModeUnlocked) {
+        if (e.code === 'KeyC') {
+            if (devStep === 0) {
+                cPressCount++;
+                if (cPressCount >= 5) {
+                    devStep = 1; // 次はスペースへ
+                }
+            } else if (devStep === 1) {
+                // 途中でCを押したらリセット
+                cPressCount = 1;
+                spacePressCount = 0;
+                devStep = 0;
+            }
+        } else if (e.code === 'Space') {
+            if (devStep === 1) {
+                spacePressCount++;
+                if (spacePressCount >= 5) {
+                    devModeUnlocked = true;
+                    devPanel.classList.add('active');
+                    updateStatus('🔧 デベロッパーモードが有効になりました');
+                }
+            } else {
+                // 順番違いでスペースが押されたらリセット
+                cPressCount = 0;
+                spacePressCount = 0;
+                devStep = 0;
+            }
+        }
+    }
+
+    if (e.code === 'KeyR' && !e.repeat && !isRecording && devStep !== 1) toggleRecording();
+    // 録画中の誤動作を防ぐため、通常のスペース再生はデベロッパーモード入力中でない場合のみ
+    if (e.code === 'Space' && !e.repeat && devStep !== 1) { togglePlayback(); e.preventDefault(); }
+    if (e.code === 'KeyC' && !e.repeat && devStep !== 1) resetAllGhosts();
 
     if (e.code === 'KeyQ' || e.code === 'BracketLeft') changeSpeed(-0.1);
     if (e.code === 'KeyE' || e.code === 'BracketRight') changeSpeed(0.1);
@@ -186,6 +248,13 @@ window.addEventListener('keyup', e => keys[e.code] = false);
 function changeSpeed(delta) {
     ghostSpeedRatio = Math.max(0.1, Math.min(2.0, Number((ghostSpeedRatio + delta).toFixed(1))));
     updateStatus(`ゴースト速度: ${ghostSpeedRatio.toFixed(1)}倍`);
+}
+
+function selectStage(index) {
+    currentStageIndex = index;
+    resetAllGhosts();
+    startTime = Date.now();
+    updateStatus(`ステージ ${index + 1} に移動しました`);
 }
 
 // --- タッチ・マウス操作イベント ---
