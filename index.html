@@ -329,7 +329,7 @@ function autoResize() {
     const wrapper = document.getElementById('gameWrapper');
     const warning = document.getElementById('rotateWarning');
     const baseWidth = 1120;
-    const baseHeight = 500; // 高度な余白を最適化
+    const baseHeight = 500;
 
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.innerWidth <= 1024);
     const isPortrait = window.innerHeight > window.innerWidth;
@@ -347,7 +347,6 @@ function autoResize() {
     const scaleY = clientHeight / baseHeight;
     const scale = Math.min(scaleX, scaleY);
 
-    // 画面中央にピタリと配置しつつスケーリング
     wrapper.style.transform = `translate(-50%, -50%) scale(${scale})`;
 }
 
@@ -562,7 +561,7 @@ const stages = [
         spikes: [{ x: 180, y: 430, w: 470, h: 20 }],
         movingSpikes: [],
         windZones: [],
-        switches: [{ x: 285, y: 100, w: 30, h: 10, pressed: false, targetDoorId: 0 }],
+        switches: [{ x: 570, y: 345, w: 30, h: 10, pressed: false, targetDoorId: 0 }],
         doors: [
             { id: 0, x: 700, y: 270, w: 20, h: 130, open: false },
             { id: 0, x: 760, y: 270, w: 20, h: 130, open: false },
