@@ -220,7 +220,7 @@ const statusText = document.getElementById('statusText');
 const devPanel = document.getElementById('devPanel');
 const gameTitle = document.getElementById('gameTitle');
 
-const gravity = 0.45; // 元の重力に戻しました
+const gravity = 0.45; // 元の重力
 const keys = {};
 
 let isRecording = false;
@@ -392,7 +392,7 @@ const stages = [
         ],
         spikes: [{ x: 150, y: 430, w: 450, h: 20 }],
         movingSpikes: [{ x: 350, y: 200, w: 40, h: 20, vy: 1.5, minY: 150, maxY: 380 }],
-        windZones: [{ x: 180, y: 100, w: 120, h: 300, forceX: 0, forceY: -0.15 }], // 風力をさらに控えめに弱めました
+        windZones: [{ x: 180, y: 100, w: 120, h: 300, forceX: 0, forceY: -0.52 }], // 重力(0.45)を少し上回る絶妙な微風に調整
         switches: [],
         doors: [],
         shooterEnemies: [{ x: 730, y: 180, w: 30, h: 40 }],
@@ -525,7 +525,7 @@ function update() {
     else player.vx = 0;
 
     if ((keys['ArrowUp'] || keys['KeyW'] || keys['KeyK']) && player.isGrounded) {
-        player.vy = -9.5; // 通常のジャンプ力
+        player.vy = -9.5;
         player.isGrounded = false;
     }
 
