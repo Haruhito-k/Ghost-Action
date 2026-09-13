@@ -188,7 +188,7 @@ let ghostSpeedRatio = 0.5;
 let devModeUnlocked = false;
 let cPressCount = 0;
 let spacePressCount = 0;
-let devStep = 0; // 0: Cを待つ, 1: スペースを待つ
+let devState = 0; // 0: C待ち, 1: スペース待ち
 
 const barrier = {
     x: 100, y: 280, w: 15, h: 120,
@@ -202,47 +202,61 @@ let currentStageIndex = 0;
 
 // --- キーボード入力イベント ---
 window.addEventListener('keydown', e => {
-    // デベロッパーモードの隠しコマンド判定 (C 5回 -> スペース 5回)
+    // デベロッパーモードの入力判定 (C 5回 -> スペース 5回)
     if (!devModeUnlocked) {
-        if (e.code === 'KeyC') {
-            if (devStep === 0) {
+        if (e.code === 'KeyC' && !e.repeat) {
+            if (devState === 0) {
                 cPressCount++;
+                updateStatus(`Cキー入力中... (${cpressCountText()}/5)`);
                 if (cPressCount >= 5) {
-                    devStep = 1; // 次はスペースへ
+                    devState = 1; // 次はスペースへ
+                    updateStatus('Cキー5回完了！次はSpaceキーを5回押してください');
                 }
-            } else if (devStep === 1) {
-                // 途中でCを押したらリセット
-                cPressCount = 1;
-                spacePressCount = 0;
-                devStep = 0;
+            } else {
+                // 順番違いの場合はリセット
+                resetDevSequence();
             }
-        } else if (e.code === 'Space') {
-            if (devStep === 1) {
+            e.preventDefault();
+            return;
+        }
+        if (e.code === 'Space' && !e.repeat) {
+            if (devState === 1) {
                 spacePressCount++;
+                updateStatus(`Spaceキー入力中... (${spacePressCount}/5)`);
                 if (spacePressCount >= 5) {
                     devModeUnlocked = true;
                     devPanel.classList.add('active');
                     updateStatus('🔧 デベロッパーモードが有効になりました');
                 }
             } else {
-                // 順番違いでスペースが押されたらリセット
-                cPressCount = 0;
-                spacePressCount = 0;
-                devStep = 0;
+                // 順番違いの場合はリセット
+                resetDevSequence();
             }
+            e.preventDefault();
+            return;
         }
     }
 
-    if (e.code === 'KeyR' && !e.repeat && !isRecording && devStep !== 1) toggleRecording();
-    // 録画中の誤動作を防ぐため、通常のスペース再生はデベロッパーモード入力中でない場合のみ
-    if (e.code === 'Space' && !e.repeat && devStep !== 1) { togglePlayback(); e.preventDefault(); }
-    if (e.code === 'KeyC' && !e.repeat && devStep !== 1) resetAllGhosts();
+    if (e.code === 'KeyR' && !e.repeat) toggleRecording();
+    if (e.code === 'Space' && !e.repeat) { togglePlayback(); e.preventDefault(); }
+    if (e.code === 'KeyC' && !e.repeat) resetAllGhosts();
 
     if (e.code === 'KeyQ' || e.code === 'BracketLeft') changeSpeed(-0.1);
     if (e.code === 'KeyE' || e.code === 'BracketRight') changeSpeed(0.1);
 
     keys[e.code] = true;
 });
+
+function cpressCountText() {
+    return cPressCount;
+}
+
+function resetDevSequence() {
+    cPressCount = 0;
+    spacePressCount = 0;
+    devState = 0;
+    updateStatus('操作: [R] 録画 | [Space] 再生/停止 | [Q/E] 速度変更');
+}
 window.addEventListener('keyup', e => keys[e.code] = false);
 
 function changeSpeed(delta) {
