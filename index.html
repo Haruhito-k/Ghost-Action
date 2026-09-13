@@ -21,10 +21,7 @@
             width: 100vw;
             height: 100vh;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            position: relative;
             touch-action: none;
         }
 
@@ -57,15 +54,19 @@
             to { transform: rotate(90deg) scale(1.2); }
         }
 
-        /* ゲーム画面全体を包むラッパー */
+        /* 画面全体の絶対中央に配置するラッパー */
         #gameWrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            transform-origin: center center;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             width: 1100px;
             height: 520px;
-            transform-origin: center center;
             flex-shrink: 0;
         }
 
@@ -96,7 +97,7 @@
             flex-direction: row-reverse;
         }
 
-        /* ゲーム画面（キャンバス）のラッパー：スマホでも極限まで広くする */
+        /* ゲーム画面（キャンバス）のラッパー */
         .canvas-container {
             position: relative;
             flex-grow: 1;
@@ -224,7 +225,7 @@
         #btnSwap     { grid-column: 2; grid-row: 3; border-color: #00ccff; color: #00ccff; box-shadow: 0 2px 0 #005588; font-size: 8px; }
         #btnSwap:active, #btnSwap.active { background-color: #00ccff; color: #0d0e15; box-shadow: 0 0 0 #005588; }
 
-        /* スマホ専用レイアウト：ボタンの大きさは以前の押しやすい特大サイズのまま、ステージ枠を限界まで拡大 */
+        /* スマホ専用レイアウト：ボタンサイズ維持＆完全中央 */
         @media screen and (max-width: 900px) {
             #gameWrapper {
                 width: 1120px;
@@ -233,11 +234,9 @@
                 width: 1100px;
                 gap: 8px;
             }
-            /* ステージの枠（キャンバス）を画面いっぱいに広げる */
             .canvas-container {
                 width: 780px; 
             }
-            /* スマホ用ボタンのサイズはそのまま維持 */
             .d-pad {
                 grid-template-columns: 66px 66px 66px;
                 grid-template-rows: 60px 60px 60px;
@@ -349,7 +348,8 @@ function autoResize() {
     const scaleY = clientHeight / baseHeight;
     const scale = Math.min(scaleX, scaleY);
 
-    wrapper.style.transform = `scale(${scale})`;
+    // 画面中央に配置しつつスケーリングを適用
+    wrapper.style.transform = `translate(-50%, -50%) scale(${scale})`;
 }
 
 window.addEventListener('resize', autoResize);
