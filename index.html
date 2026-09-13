@@ -91,26 +91,6 @@
             line-height: 1.6;
             margin: 8px 0;
         }
-        .start-rules {
-            background: #0d0e15;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 12px;
-            margin: 16px 0;
-            text-align: left;
-        }
-        .start-rules h3 {
-            color: #ff0055;
-            font-size: 12px;
-            margin: 0 0 6px 0;
-        }
-        .start-rules ul {
-            margin: 0;
-            padding-left: 16px;
-            font-size: 11px;
-            color: #aaa;
-            line-height: 1.5;
-        }
         .start-btn {
             background-color: #00ffcc;
             color: #0d0e15;
@@ -122,7 +102,7 @@
             cursor: pointer;
             box-shadow: 0 4px 0 #008866;
             transition: transform 0.05s, box-shadow 0.05s;
-            margin-top: 10px;
+            margin-top: 20px;
         }
         .start-btn:active {
             transform: translateY(4px);
@@ -521,7 +501,7 @@
         <h1 id="gameTitle">Ghost Action</h1>
         <div class="status" id="statusText">操作: [R] 録画 | [Space] 再生/停止 | [Q/E] 速度変更</div>
         
-        <!-- 上部バー（カラー選択 ＋ 遊び方ボタン）※赤色チップ削除済み -->
+        <!-- 上部バー（カラー選択 ＋ 遊び方ボタン） -->
         <div class="top-bar-area">
             <div class="color-picker-bar">
                 <span>キャラカラー:</span>
@@ -537,10 +517,12 @@
 
         <div class="dev-panel" id="devPanel">
             <div style="color: #ffcc00; font-weight: bold; font-size: 10px; margin-bottom: 2px;">🔧 デベロッパーモード有効</div>
-            <div style="display: flex; justify-content: center; gap: 6px;">
-                <button class="btn" onclick="selectStage(0)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 3px 8px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">ステージ 1</button>
-                <button class="btn" onclick="selectStage(1)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 3px 8px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">ステージ 2</button>
-                <button class="btn" onclick="selectStage(2)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 3px 8px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">ステージ 3</button>
+            <div style="display: flex; justify-content: center; gap: 4px; flex-wrap: wrap;">
+                <button class="btn" onclick="selectStage(0)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 3px 6px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">S1</button>
+                <button class="btn" onclick="selectStage(1)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 3px 6px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">S2</button>
+                <button class="btn" onclick="selectStage(2)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 3px 6px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">S3</button>
+                <button class="btn" onclick="selectStage(3)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 3px 6px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">S4</button>
+                <button class="btn" onclick="selectStage(4)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 3px 6px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">S5</button>
             </div>
         </div>
 
@@ -863,6 +845,44 @@ bindTouchButton('btnReset', null, resetAllGhosts);
 bindTouchButton('btnSwap', null, toggleLayoutSwap);
 
 const stages = [
+    // ステージ1：チュートリアル1（基本の移動とゴール）
+    {
+        start: { x: 40, y: 350 },
+        goal: { x: 720, y: 330, w: 35, h: 60 },
+        map: [
+            { x: 0, y: 400, w: 800, h: 50 },
+            { x: 0, y: 0, w: 15, h: 450 },
+            { x: 785, y: 0, w: 15, h: 450 }
+        ],
+        spikes: [],
+        movingSpikes: [],
+        windZones: [],
+        switches: [],
+        doors: [],
+        shooterEnemies: [],
+        movingEnemies: [],
+        tutorialText: "【チュートリアル 1】左右キーで歩いてオレンジの扉へ向かおう！"
+    },
+    // ステージ2：チュートリアル2（録画と足場化の基本）
+    {
+        start: { x: 40, y: 350 },
+        goal: { x: 720, y: 150, w: 35, h: 60 },
+        map: [
+            { x: 0, y: 400, w: 250, h: 50 },
+            { x: 500, y: 220, w: 300, h: 230 },
+            { x: 0, y: 0, w: 15, h: 450 },
+            { x: 785, y: 0, w: 15, h: 450 }
+        ],
+        spikes: [{ x: 250, y: 430, w: 250, h: 20 }],
+        movingSpikes: [],
+        windZones: [],
+        switches: [],
+        doors: [],
+        shooterEnemies: [],
+        movingEnemies: [],
+        tutorialText: "【チュートリアル 2】[🔴録画]→高い所に登って[🔴録画]停止→[▶再生]中に[▶再生]で足場にしよう！"
+    },
+    // ステージ3（旧ステージ1）
     {
         start: { x: 40, y: 350 },
         goal: { x: 720, y: 70, w: 35, h: 60 },
@@ -880,8 +900,10 @@ const stages = [
         switches: [],
         doors: [],
         shooterEnemies: [{ x: 720, y: 210, w: 30, h: 40, dir: 'left' }],
-        movingEnemies: [{ x: 520, y: 224, w: 26, h: 26, vx: -0.8, minX: 510, maxX: 640 }]
+        movingEnemies: [{ x: 520, y: 224, w: 26, h: 26, vx: -0.8, minX: 510, maxX: 640 }],
+        tutorialText: null
     },
+    // ステージ4（旧ステージ2）
     {
         start: { x: 40, y: 350 },
         goal: { x: 730, y: 60, w: 35, h: 60 },
@@ -899,8 +921,10 @@ const stages = [
         switches: [],
         doors: [],
         shooterEnemies: [{ x: 730, y: 180, w: 30, h: 40, dir: 'left' }],
-        movingEnemies: []
+        movingEnemies: [],
+        tutorialText: null
     },
+    // ステージ5（旧ステージ3）
     {
         start: { x: 40, y: 350 },
         goal: { x: 720, y: 330, w: 35, h: 60 },
@@ -925,12 +949,20 @@ const stages = [
             { x: 420, y: 110, w: 30, h: 40, dir: 'left' },
             { x: 570, y: 380, w: 40, h: 20, dir: 'up' }
         ],
-        movingEnemies: []
+        movingEnemies: [],
+        tutorialText: null
     }
 ];
 
 function getCurrentStage() {
     return stages[currentStageIndex];
+}
+
+function clearInputs() {
+    for (let k in keys) {
+        keys[k] = false;
+    }
+    document.querySelectorAll('.d-btn, .btn').forEach(el => el.classList.remove('active'));
 }
 
 function toggleRecording() {
@@ -980,6 +1012,7 @@ function resetAllGhosts() {
     ghosts = [];
     bullets = [];
     particles = [];
+    clearInputs();
     const stg = getCurrentStage();
     if (stg.switches) stg.switches.forEach(s => s.pressed = false);
     if (stg.doors) stg.doors.forEach(d => d.open = false);
@@ -989,6 +1022,7 @@ function resetAllGhosts() {
 
 function respawnPlayer() {
     playSound('die');
+    clearInputs();
     const stg = getCurrentStage();
     player.x = stg.start.x;
     player.y = stg.start.y;
@@ -1275,6 +1309,7 @@ function update() {
 
     if (isColliding(player, stg.goal)) {
         playSound('clear');
+        clearInputs(); // ★ クリア時にキー入力をクリア
         if (currentStageIndex < stages.length - 1) {
             alert(`STAGE ${currentStageIndex + 1} CLEAR! 次のステージへ進みます。`);
             currentStageIndex++;
@@ -1360,9 +1395,22 @@ function draw() {
     ctx.fillRect(player.x, player.y, player.w, player.h);
 
     ctx.fillStyle = '#ffffff'; ctx.font = '16px monospace'; ctx.textAlign = 'left';
-    ctx.fillText(`TIME: ${formatTime(elapsedTime)}  STAGE: ${currentStageIndex + 1}/3`, 25, 35);
+    ctx.fillText(`TIME: ${formatTime(elapsedTime)}  STAGE: ${currentStageIndex + 1}/5`, 25, 35);
     ctx.fillStyle = '#00e5ff';
     ctx.fillText(`ゴースト速度: (${ghostSpeedRatio.toFixed(1)}倍)`, 25, 60);
+
+    // チュートリアルテキスト表示
+    if (stg.tutorialText) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(150, 80, 500, 40);
+        ctx.strokeStyle = '#00ffcc';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(150, 80, 500, 40);
+        ctx.fillStyle = '#00ffcc';
+        ctx.font = '12px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(stg.tutorialText, 400, 105);
+    }
 }
 
 function loop() {
