@@ -1075,12 +1075,20 @@ function enterStage(index, showStatus = false) {
 }
 
 function selectStage(index) {
-    // VERY HARDデベロッパーモードでは、9個のボタンを
-    // 「9個のNORMALステージ」として扱わない。
-    // S1～S3 → VH1、S4～S6 → VH2、S7～S9 → VH3 の
-    // 連結ステージ内の該当位置へ直接ジャンプする。
-    if (gameMode !== 'veryhard' || !veryHardDevIndividualStages) return;
     if (!Number.isInteger(index) || index < 0 || index >= 9) return;
+    if (!_x1) return;
+
+    // NORMAL MODEのデベロッパーモードでは、S1～S9を
+    // それぞれのNORMALステージとして直接選択する。
+    if (gameMode === 'normal') {
+        enterStage(index, false);
+        updateStatus(`🔧 DEV：S${index + 1}へ移動しました`);
+        return;
+    }
+
+    // VERY HARD MODEのデベロッパーモードでは、NORMALステージを読み込まず、
+    // VH1～VH3の連結ステージ内の該当位置へジャンプする。
+    if (gameMode !== 'veryhard' || !veryHardDevIndividualStages) return;
 
     const combinedIndex = Math.floor(index / 3);
     const segmentIndex = index % 3;
@@ -1089,9 +1097,6 @@ function selectStage(index) {
     veryHardDevStageSegment = segmentIndex;
     enterStage(combinedIndex, false);
 
-    // 連結ステージ内の各面の開始地点へ移動。
-    // S1/S4/S7 は0番目なので元のスタート地点、
-    // S2/S5/S8 は800px先、S3/S6/S9は1600px先。
     const offset = segmentIndex * 800;
     const stg = getCurrentStage();
     player.x = offset + 40;
