@@ -366,11 +366,11 @@
 
         /* アクションボタン群 */
         .action-pad {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: center;
-    gap: 8px;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: center !important;
+    gap: 10px !important;
     flex-shrink: 0;
 }
         .btn {
@@ -490,6 +490,41 @@
     border-radius: 8px;
     pointer-events: none;
 }
+.action-pad .btn {
+    width: 94px !important;
+    min-width: 94px !important;
+    height: 74px !important;
+    min-height: 74px !important;
+    padding: 8px 6px !important;
+    font-size: 17px !important;
+    line-height: 1.25 !important;
+    border-radius: 10px !important;
+    touch-action: manipulation;
+}
+
+.howto-highlight {
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    padding: 12px 20px !important;
+    min-height: 58px !important;
+    border: 3px solid currentColor !important;
+    border-radius: 12px !important;
+    box-shadow: 0 0 14px rgba(0, 255, 204, 0.55);
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+
+.dev-stage-btn {
+    min-width: 42px !important;
+    min-height: 32px !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+}
+
 </style>
 </head>
 <body>
@@ -565,11 +600,14 @@
         <div class="dev-panel" id="devPanel">
             <div style="color: #ffcc00; font-weight: bold; font-size: 10px; margin-bottom: 2px;">🔧 デベロッパーモード有効</div>
             <div style="display: flex; justify-content: center; gap: 4px; flex-wrap: wrap;">
-                <button class="btn" onclick="selectStage(0)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 3px 6px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">S1</button>
-                <button class="btn" onclick="selectStage(1)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 3px 6px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">S2</button>
-                <button class="btn" onclick="selectStage(2)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 3px 6px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">S3</button>
-                <button class="btn" onclick="selectStage(3)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 3px 6px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">S4</button>
-                <button class="btn" onclick="selectStage(4)" style="grid-column:auto; grid-row:auto; aspect-ratio: auto; padding: 3px 6px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">S5</button>
+                <button class="btn dev-stage-btn" onclick="selectStage(0)" style="padding: 6px 9px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">S1</button>
+                <button class="btn dev-stage-btn" onclick="selectStage(1)" style="padding: 6px 9px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">S2</button>
+                <button class="btn dev-stage-btn" onclick="selectStage(2)" style="padding: 6px 9px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">S3</button>
+                <button class="btn dev-stage-btn" onclick="selectStage(3)" style="padding: 6px 9px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">S4</button>
+                <button class="btn dev-stage-btn" onclick="selectStage(4)" style="padding: 6px 9px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">S5</button>
+                <button class="btn dev-stage-btn" onclick="selectStage(5)" style="padding: 6px 9px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">S6</button>
+                <button class="btn dev-stage-btn" onclick="selectStage(6)" style="padding: 6px 9px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">S7</button>
+                <button class="btn dev-stage-btn" onclick="selectStage(7)" style="padding: 6px 9px; border-color:#ffcc00; box-shadow:0 2px 0 #886600;">S8</button>
             </div>
         </div>
 
@@ -707,9 +745,20 @@ autoResize();
 
 let gameStarted = false;
 function startGame() {
-    initAudio();
+    // 音声初期化に失敗しても、ゲーム自体は開始できるようにする
+    try {
+        initAudio();
+    } catch (e) {
+        console.warn('Audio initialization skipped:', e);
+    }
+
     gameStarted = true;
-    document.getElementById('startScreen').style.display = 'none';
+    const startScreen = document.getElementById('startScreen');
+    if (startScreen) {
+        startScreen.style.display = 'none';
+        startScreen.style.pointerEvents = 'none';
+    }
+
     startTime = Date.now();
     resetAllGhosts();
 }
@@ -843,8 +892,19 @@ function changeSpeed(delta) {
 }
 
 function selectStage(index) {
+    // 実在するステージ番号だけを選択
+    if (!Number.isInteger(index) || index < 0 || index >= stages.length) return;
+
     currentStageIndex = index;
+    clearInputs();
     resetAllGhosts();
+
+    const stg = getCurrentStage();
+    player.x = stg.start.x;
+    player.y = stg.start.y;
+    player.vx = 0;
+    player.vy = 0;
+
     startTime = Date.now();
     updateStatus(`ステージ ${index + 1} に移動しました`);
 }
@@ -1535,7 +1595,7 @@ function draw() {
     ctx.fillRect(player.x, player.y, player.w, player.h);
 
     ctx.fillStyle = '#ffffff'; ctx.font = '16px monospace'; ctx.textAlign = 'left';
-    ctx.fillText(`TIME: ${formatTime(elapsedTime)}  STAGE: ${currentStageIndex + 1}/5`, 25, 35);
+    ctx.fillText(`TIME: ${formatTime(elapsedTime)}  STAGE: ${currentStageIndex + 1}/${stages.length}`, 25, 35);
     ctx.fillStyle = '#00e5ff';
     ctx.fillText(`ゴースト速度: (${ghostSpeedRatio.toFixed(1)}倍)`, 25, 60);
 
