@@ -638,6 +638,65 @@
     pointer-events: auto !important;
 }
 
+
+        /* プレイ中の停止メニュー */
+        #stopBtn {
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            z-index: 99990;
+            min-width: 76px;
+            min-height: 44px;
+            padding: 8px 12px;
+            border: 2px solid #ffffff;
+            border-radius: 9px;
+            background: rgba(20, 22, 32, 0.92);
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 3px 0 rgba(0,0,0,0.5);
+        }
+        #stopBtn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.5); }
+        #stopMenu {
+            position: fixed;
+            inset: 0;
+            z-index: 99991;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.38);
+            pointer-events: auto;
+        }
+        #stopMenu.active { display: flex; }
+        .stop-menu-box {
+            width: 360px;
+            max-width: 88vw;
+            padding: 24px;
+            border: 3px solid #00ffcc;
+            border-radius: 16px;
+            background: #161823;
+            box-shadow: 0 0 28px rgba(0,255,204,0.35);
+            text-align: center;
+        }
+        .stop-menu-box h2 { margin: 0 0 18px; color: #00ffcc; font-size: 24px; }
+        .stop-menu-btn {
+            width: 100%;
+            min-height: 52px;
+            margin-top: 10px;
+            border: 2px solid #00ffcc;
+            border-radius: 10px;
+            background: #10121c;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .stop-menu-btn.home { border-color: #ffcc00; }
+        .stop-menu-btn.reset { border-color: #ff6699; }
+        .stop-menu-btn.close { border-color: #888; color: #ddd; }
+        .stop-menu-note { margin: 8px 0 4px; color: #aaa; font-size: 11px; line-height: 1.5; }
+
 </style>
 </head>
 <body>
@@ -655,7 +714,11 @@
             <h1>👻 Ghost Action</h1>
             <p>自分の動きを録画して「ゴースト」を作り、足場にしてゴールを目指すアクションパズルゲーム！</p>
             <p style="font-size:16px; color:#00ffcc; font-weight:bold; margin-top:20px;">モードを選択してください</p>
-            <button class="start-btn" onclick="startGame('normal')" style="display:block; width:100%; margin-top:14px;">
+            <button class="start-btn" onclick="startGame('tutorial')" style="display:block; width:100%; margin-top:14px; background-color:#00aaff; color:#fff; box-shadow:0 4px 0 #005588;">
+                TUTORIAL MODE
+                <span style="display:block; font-size:11px; margin-top:4px;">実際に操作しながらゲームの仕組みを覚える</span>
+            </button>
+            <button class="start-btn" onclick="startGame('normal')" style="display:block; width:100%; margin-top:16px;">
                 NORMAL MODE
                 <span style="display:block; font-size:11px; margin-top:4px;">9ステージを順番に攻略</span>
             </button>
@@ -663,10 +726,18 @@
                 VERY HARD MODE
                 <span style="display:block; font-size:11px; margin-top:4px;">S1～S3 / S4～S6 / S7～S9を連結</span>
             </button>
-            <button class="start-btn" onclick="startGame('tutorial')" style="display:block; width:100%; margin-top:16px; background-color:#00aaff; color:#fff; box-shadow:0 4px 0 #005588;">
-                TUTORIAL MODE
-                <span style="display:block; font-size:11px; margin-top:4px;">実際に操作しながらゲームの仕組みを覚える</span>
-            </button>
+        </div>
+    </div>
+
+    <button id="stopBtn" onclick="toggleStopMenu(true)" style="display:none;">■ 停止</button>
+
+    <div id="stopMenu">
+        <div class="stop-menu-box">
+            <h2>⏸ メニュー</h2>
+            <p class="stop-menu-note">このメニューを開いている間も、タイマーやステージ内の動きは止まりません。</p>
+            <button class="stop-menu-btn home" onclick="returnToHome()">🏠 ホーム画面に戻る</button>
+            <button class="stop-menu-btn reset" onclick="resetCurrentStageFromMenu()">🔄 ステージをリセット</button>
+            <button class="stop-menu-btn close" onclick="toggleStopMenu(false)">ゲームに戻る</button>
         </div>
     </div>
 
@@ -927,6 +998,8 @@ function startGame(mode = 'normal') {
         startScreen.style.display = 'none';
         startScreen.style.pointerEvents = 'none';
     }
+    const stopButton = document.getElementById('stopBtn');
+    if (stopButton) stopButton.style.display = 'block';
 
     enterStage(0, false);
 
@@ -936,6 +1009,53 @@ function startGame(mode = 'normal') {
         updateStatus('TUTORIAL MODE\n実際に操作しながら覚えよう！');
     } else {
         updateStatus('NORMAL MODE\nSTAGE 1から開始');
+    }
+}
+
+function toggleStopMenu(show) {
+    const menu = document.getElementById('stopMenu');
+    if (!menu) return;
+    if (!gameStarted) {
+        menu.classList.remove('active');
+        return;
+    }
+    menu.classList.toggle('active', !!show);
+    if (show) {
+        clearInputs();
+    }
+}
+
+function resetCurrentStageFromMenu() {
+    if (!gameStarted) return;
+    toggleStopMenu(false);
+    const stg = getCurrentStage();
+    resetStageRuntime(stg);
+    bullets = [];
+    particles = [];
+    bulletTimer = 0;
+    resetAllGhosts();
+    updateStatus('ステージをリセットしました\nタイマーは継続します');
+}
+
+function returnToHome() {
+    gameStarted = false;
+    clearInputs();
+    bullets = [];
+    particles = [];
+    isRecording = false;
+    recordedFrames = [];
+    ghosts = [];
+    veryHardDevIndividualStages = false;
+    devPanel.classList.remove('active');
+    closeTutorialMovie();
+    toggleStopMenu(false);
+    const stopButton = document.getElementById('stopBtn');
+    if (stopButton) stopButton.style.display = 'none';
+
+    const startScreen = document.getElementById('startScreen');
+    if (startScreen) {
+        startScreen.style.display = 'flex';
+        startScreen.style.pointerEvents = 'auto';
     }
 }
 
@@ -1137,6 +1257,7 @@ function _z_reset() {
 
 window.addEventListener('keydown', e => {
     if (!gameStarted || helpModal.style.display === 'flex') return;
+    if (e.code === 'Escape') { toggleStopMenu(false); return; }
     initAudio();
 
     if (e.code === 'KeyR' && !e.repeat) toggleRecording();
